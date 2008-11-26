@@ -43,6 +43,9 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Httper\Httper.cs" />
+    <Compile Include="Httper\NewHttper.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="HttpModule\HttpModule.cs" />
     <Compile Include="LoginUtility\LoginDZ.cs" />
     <Compile Include="RegexUtility\RegexUtility.cs" />
