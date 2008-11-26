@@ -12,6 +12,7 @@ namespace Natsuhime
     public class NewTemplate
     {
         static Regex[] r = new Regex[25];
+        static Dictionary<string, string> reftemplatecache;
         static NewTemplate()
         {
             RegexOptions options = RegexOptions.Compiled;
@@ -102,7 +103,7 @@ namespace Natsuhime
             //非引用模板列表
             List<string> maintemplatefilelist = new List<string>();
             //_开头的被引用模板内容缓存.转换后存入缓存._开头的模板是最深模板,里面不能再引用别人.
-            Dictionary<string, string> reftemplatecache = new Dictionary<string, string>();
+            reftemplatecache = new Dictionary<string, string>();
 
             foreach (string file in templatefilelist)
             {
@@ -236,11 +237,20 @@ namespace Natsuhime
             //子模板
             foreach (Match m in r[0].Matches(source.ToString()))
             {
-                iscodeline = true;
-                source.Replace(
-                    m.Groups[0].ToString(),
-                    string.Format("\r\n{0}\r\n", m.Groups[1].ToString())
-                    );
+                //TODO 子模板载入问题,现在的子模板无法嵌套,因为有的子模板载入缓存顺序不一致.
+                string subtemplatename=m.Groups[1].ToString();
+                if (reftemplatecache.ContainsKey(subtemplatename))
+                {
+                    iscodeline = true;
+                    source.Replace(
+                        m.Groups[0].ToString(),
+                        string.Format("\r\n{0}\r\n", reftemplatecache[subtemplatename])
+                        );
+                }
+                else
+                {                    
+                    throw new Exception(string.Format("Could NOT Find SubTemplate{0}.Please Check File", subtemplatename));
+                }
             }
             //<loop>
             foreach (Match m in r[1].Matches(source.ToString()))
