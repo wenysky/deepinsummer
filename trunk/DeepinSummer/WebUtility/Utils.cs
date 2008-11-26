@@ -282,5 +282,35 @@ namespace Natsuhime
             content = Regex.Replace(content, @"(script|frame|form|meta|behavior|style)([\s|:|>])+", "$1.$2", RegexOptions.IgnoreCase);
             return content;
         }
+
+        /// <summary>
+        /// 取得当前的时间戳.
+        /// </summary>
+        /// <returns></returns>
+        public static string UnixTimestamp()
+        {
+            DateTime dtStart = TimeZone.CurrentTimeZone.ToLocalTime(new DateTime(1970, 1, 1));
+            DateTime dtNow = DateTime.Parse(DateTime.Now.ToString());
+            TimeSpan toNow = dtNow.Subtract(dtStart);
+            string timeStamp = toNow.Ticks.ToString();
+            return timeStamp.Substring(0, timeStamp.Length - 7);
+        }
+        public static string Timestamp2Date(string s)
+        {
+            string timeStamp = s;
+            DateTime dtStart = TimeZone.CurrentTimeZone.ToLocalTime(new DateTime(1970, 1, 1));
+            long lTime = long.Parse(timeStamp + "0000000");
+            TimeSpan toNow = new TimeSpan(lTime);
+            DateTime dtResult = dtStart.Add(toNow);
+            return dtResult.ToString("yyyy-MM-dd");
+        }
+
+        public static string GetTimestamp(int year, int month, int day)
+        {
+            DateTime timeStamp0 = new DateTime(1970, 1, 1);
+            DateTime timeStamp = new DateTime(year, month, day);
+            long a = (timeStamp.Ticks - timeStamp0.Ticks) / 10000000 - 8 * 60 * 60;
+            return a.ToString();
+        }
     }
 }
