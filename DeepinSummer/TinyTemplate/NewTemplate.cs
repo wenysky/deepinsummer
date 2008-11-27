@@ -131,7 +131,7 @@ namespace Natsuhime
                     Encoding.UTF8
                     );
             }
-
+            System.Diagnostics.Debug.WriteLine("生成完毕!");
         }
         string GetRefTemplate(string filepath)
         {
