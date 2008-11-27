@@ -34,8 +34,9 @@
             this.tbxPagefileFolder = new System.Windows.Forms.TextBox();
             this.label1 = new System.Windows.Forms.Label();
             this.label2 = new System.Windows.Forms.Label();
-            this.textBox3 = new System.Windows.Forms.TextBox();
+            this.tbxMessage = new System.Windows.Forms.TextBox();
             this.btnCreate = new System.Windows.Forms.Button();
+            this.btnOldVersion = new System.Windows.Forms.Button();
             this.SuspendLayout();
             // 
             // btnSelectTemplateFolder
@@ -90,13 +91,14 @@
             this.label2.TabIndex = 5;
             this.label2.Text = "生成目录:";
             // 
-            // textBox3
+            // tbxMessage
             // 
-            this.textBox3.Location = new System.Drawing.Point(12, 75);
-            this.textBox3.Multiline = true;
-            this.textBox3.Name = "textBox3";
-            this.textBox3.Size = new System.Drawing.Size(435, 178);
-            this.textBox3.TabIndex = 6;
+            this.tbxMessage.Location = new System.Drawing.Point(12, 75);
+            this.tbxMessage.Multiline = true;
+            this.tbxMessage.Name = "tbxMessage";
+            this.tbxMessage.ScrollBars = System.Windows.Forms.ScrollBars.Vertical;
+            this.tbxMessage.Size = new System.Drawing.Size(435, 178);
+            this.tbxMessage.TabIndex = 6;
             // 
             // btnCreate
             // 
@@ -108,13 +110,24 @@
             this.btnCreate.UseVisualStyleBackColor = true;
             this.btnCreate.Click += new System.EventHandler(this.btnCreate_Click);
             // 
+            // btnOldVersion
+            // 
+            this.btnOldVersion.Location = new System.Drawing.Point(276, 259);
+            this.btnOldVersion.Name = "btnOldVersion";
+            this.btnOldVersion.Size = new System.Drawing.Size(82, 23);
+            this.btnOldVersion.TabIndex = 8;
+            this.btnOldVersion.Text = "旧版生成";
+            this.btnOldVersion.UseVisualStyleBackColor = true;
+            this.btnOldVersion.Click += new System.EventHandler(this.btnOldVersion_Click);
+            // 
             // Form1
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 12F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(458, 287);
+            this.Controls.Add(this.btnOldVersion);
             this.Controls.Add(this.btnCreate);
-            this.Controls.Add(this.textBox3);
+            this.Controls.Add(this.tbxMessage);
             this.Controls.Add(this.label2);
             this.Controls.Add(this.label1);
             this.Controls.Add(this.tbxPagefileFolder);
@@ -136,8 +149,9 @@
         private System.Windows.Forms.TextBox tbxPagefileFolder;
         private System.Windows.Forms.Label label1;
         private System.Windows.Forms.Label label2;
-        private System.Windows.Forms.TextBox textBox3;
+        private System.Windows.Forms.TextBox tbxMessage;
         private System.Windows.Forms.Button btnCreate;
+        private System.Windows.Forms.Button btnOldVersion;
     }
 }
 
