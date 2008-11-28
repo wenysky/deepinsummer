@@ -145,7 +145,7 @@ namespace Natsuhime.Data
                             {
                                 try
                                 {
-                                    m_provider = (IDbProvider)Activator.CreateInstance(Type.GetType(string.Format("Yuwen.Tools.Data.DbProviders.{0}, Yuwen.Tools.Data", Dbtype), false, true));
+                                    m_provider = (IDbProvider)Activator.CreateInstance(Type.GetType(string.Format("Natsuhime.Data.DbProviders.{0}, DeepinSummer", Dbtype), false, true));
                                 }
                                 catch
                                 {
