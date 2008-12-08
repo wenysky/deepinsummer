@@ -63,6 +63,7 @@
     <Compile Include="TinyTemplate\Template.cs" />
     <Compile Include="UnVerfityImage\UnCode.cs" />
     <Compile Include="UnVerfityImage\UnCodebase.cs" />
+    <Compile Include="CommonUtility\Utils.cs" />
     <Compile Include="WebUtility\Utils.cs" />
     <Compile Include="XmlHelper\XmlHelper.cs" />
     <Compile Include="XmlHelper\XmlUtility.cs" />
