@@ -1,6 +1,6 @@
 using System;
-using System.Collections.Generic;
 using System.Text;
+using System.Collections.Generic;
 using System.Text.RegularExpressions;
 
 namespace Natsuhime.Common
@@ -17,6 +17,15 @@ namespace Natsuhime.Common
             return Regex.IsMatch(ip, @"^((2[0-4]\d|25[0-5]|[01]?\d\d?)\.){3}(2[0-4]\d|25[0-5]|[01]?\d\d?)$");
         }
 
+        /// <summary>
+        /// 检测是否有Sql危险字符
+        /// </summary>
+        /// <param name="str">要判断字符串</param>
+        /// <returns>判断结果</returns>
+        public static bool IsSafeSqlString(string str)
+        {
+            return !Regex.IsMatch(str, @"[-|;|,|\/|\(|\)|\[|\]|\}|\{|%|@|\*|!|\']");
+        }
         /// <summary>
         /// 取得当前的时间戳.
         /// </summary>
