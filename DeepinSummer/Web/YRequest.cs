@@ -155,10 +155,10 @@ namespace Natsuhime.Web
                 return "";
             }
 
-            //if (sqlSafeCheck && !Utils.IsSafeSqlString(HttpContext.Current.Request.QueryString[strName]))
-            //{
-            //    return "unsafe string";
-            //}
+            if (sqlSafeCheck && !Common.Utils.IsSafeSqlString(HttpContext.Current.Request.QueryString[strName]))
+            {
+                return "unsafe string";
+            }
 
             return HttpContext.Current.Request.QueryString[strName];
         }
@@ -331,8 +331,6 @@ namespace Natsuhime.Web
         /// <returns>当前页面客户端的IP</returns>
         public static string GetIP()
         {
-
-
             string result = String.Empty;
 
             result = HttpContext.Current.Request.ServerVariables["HTTP_X_FORWARDED_FOR"];
