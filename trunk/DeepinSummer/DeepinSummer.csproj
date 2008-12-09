@@ -42,6 +42,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Common\TypeParse.cs" />
+    <Compile Include="Common\Utils.cs" />
     <Compile Include="Httper\Httper.cs" />
     <Compile Include="Httper\NewHttper.cs">
       <SubType>Component</SubType>
@@ -63,8 +65,8 @@
     <Compile Include="TinyTemplate\Template.cs" />
     <Compile Include="UnVerfityImage\UnCode.cs" />
     <Compile Include="UnVerfityImage\UnCodebase.cs" />
-    <Compile Include="CommonUtility\Utils.cs" />
-    <Compile Include="WebUtility\Utils.cs" />
+    <Compile Include="Web\Utils.cs" />
+    <Compile Include="Web\YRequest.cs" />
     <Compile Include="XmlHelper\XmlHelper.cs" />
     <Compile Include="XmlHelper\XmlUtility.cs" />
   </ItemGroup>
