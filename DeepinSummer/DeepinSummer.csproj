@@ -42,6 +42,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Common\SerializationHelper.cs" />
     <Compile Include="Common\TypeParse.cs" />
     <Compile Include="Common\Utils.cs" />
     <Compile Include="Httper\Httper.cs" />
