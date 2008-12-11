@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Web;
 using Natsuhime.Common;
+using System.IO;
 
 namespace Natsuhime.Web
 {
@@ -352,16 +353,22 @@ namespace Natsuhime.Web
             return result;
 
         }
-
+        
         /// <summary>
         /// 保存用户上传的文件
         /// </summary>
-        /// <param name="path">保存路径</param>
-        public static void SaveRequestFile(string path)
+        /// <param name="postedfile"></param>
+        /// <param name="savepath">保存路径</param>
+        public static void SaveRequestFile(HttpPostedFile postedfile, string savepath)
         {
-            if (HttpContext.Current.Request.Files.Count > 0)
+            string filedir = Path.GetDirectoryName(savepath);
+            if (!Directory.Exists(filedir))
             {
-                HttpContext.Current.Request.Files[0].SaveAs(path);
+                Directory.CreateDirectory(filedir);
+            }
+            if (postedfile != null)
+            {
+                postedfile.SaveAs(savepath);
             }
         }
     }
