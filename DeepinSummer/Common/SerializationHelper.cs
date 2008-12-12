@@ -12,7 +12,7 @@ namespace Natsuhime.Common
         /// <param name="o"></param>
         /// <param name="t"></param>
         /// <param name="fullXmlPath"></param>
-        public static void XmlSerialize(object o, string fullXmlPath)
+        public static void SaveXml(object o, string fullXmlPath)
         {
             FileStream fs = null;
             try
@@ -38,7 +38,7 @@ namespace Natsuhime.Common
         /// <param name="t"></param>
         /// <param name="fullXmlPath"></param>
         /// <returns></returns>
-        public static object XmlDeSerialize(Type t, string fullXmlPath)
+        public static object LoadXml(Type t, string fullXmlPath)
         {
             FileStream fs = null;
             object o = null;
