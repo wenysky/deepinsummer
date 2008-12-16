@@ -82,6 +82,14 @@ namespace Natsuhime
             r[24] = new Regex(@"<%break%>");
         }
         string Inherits_Default;
+        /// <summary>
+        /// 读取模板文件的目录
+        /// </summary>
+        string TemplateFilePath;
+        /// <summary>
+        /// ASPX文件生成目录
+        /// </summary>
+        string PageFileFilePath;
         public NewTemplate(string defaultinherits)
         {
             this.Inherits_Default = defaultinherits;
@@ -96,9 +104,13 @@ namespace Natsuhime
         //只支持layer层级嵌套为1
         void Create(string templatefilepath, string pagefilepath, int layer)
         {
+            this.TemplateFilePath = templatefilepath;
+            this.PageFileFilePath = pagefilepath;
+
+
             //取得目录下的文件列表
-            string[] templatefilelist = Directory.GetFiles(templatefilepath, "*.htm");
-            System.Diagnostics.Debug.WriteLine(string.Format("目录:{0}下的文件列表载入完毕.", templatefilepath));
+            string[] templatefilelist = Directory.GetFiles(this.TemplateFilePath, "*.htm");
+            System.Diagnostics.Debug.WriteLine(string.Format("目录:{0}下的文件列表载入完毕.", this.TemplateFilePath));
 
             //非引用模板列表
             List<string> maintemplatefilelist = new List<string>();
@@ -110,9 +122,7 @@ namespace Natsuhime
                 string filename = Path.GetFileNameWithoutExtension(file);
                 if (filename.StartsWith("_"))
                 {
-                    string content = GetRefTemplate(file);
-                    reftemplatecache.Add(filename, content);
-                    System.Diagnostics.Debug.WriteLine(string.Format("引用模板:{0}载入缓存完毕.", file));
+                    LoadRefTemplateCache(filename);
                 }
                 else
                 {
@@ -126,12 +136,33 @@ namespace Natsuhime
             {
                 string result = CreatMainTemplate(file);
                 File.WriteAllText(
-                    Path.Combine(pagefilepath, Path.GetFileNameWithoutExtension(file) + ".aspx"),
+                    Path.Combine(this.PageFileFilePath, Path.GetFileNameWithoutExtension(file) + ".aspx"),
                     result,
                     Encoding.UTF8
                     );
             }
             System.Diagnostics.Debug.WriteLine("生成完毕!");
+        }
+        /// <summary>
+        /// 载入子模板进入缓存的方法
+        /// </summary>
+        /// <param name="filename"></param>
+        void LoadRefTemplateCache(string filename)
+        {
+            if (!reftemplatecache.ContainsKey(filename))
+            {
+                string filepath = Path.Combine(this.TemplateFilePath, filename + ".htm");
+                if (File.Exists(filepath))
+                {
+                    string content = GetRefTemplate(filepath);
+                    reftemplatecache.Add(filename, content);
+                    System.Diagnostics.Debug.WriteLine(string.Format("引用模板:{0}载入缓存完毕.", filename));
+                }
+                else
+                {
+                    throw new Exception(string.Format("Could NOT Find SubTemplate:{0} At Path:{1}.Please Check File", filepath, filepath));
+                }
+            }
         }
         string GetRefTemplate(string filepath)
         {
@@ -228,7 +259,7 @@ namespace Natsuhime
             return source.ToString();
         }
 
-        private static string ConvertTags(string SourceText)
+        private string ConvertTags(string SourceText)
         {
             bool iscodeline = false;
             StringBuilder source = new StringBuilder(SourceText);
@@ -238,7 +269,7 @@ namespace Natsuhime
             foreach (Match m in r[0].Matches(source.ToString()))
             {
                 //TODO 子模板载入问题,现在的子模板无法嵌套,因为有的子模板载入缓存顺序不一致.
-                string subtemplatename=m.Groups[1].ToString();
+                string subtemplatename = m.Groups[1].ToString();
                 if (reftemplatecache.ContainsKey(subtemplatename))
                 {
                     iscodeline = true;
@@ -248,8 +279,9 @@ namespace Natsuhime
                         );
                 }
                 else
-                {                    
-                    throw new Exception(string.Format("Could NOT Find SubTemplate{0}.Please Check File", subtemplatename));
+                {
+                    LoadRefTemplateCache(subtemplatename);
+                    //throw new Exception(string.Format("Could NOT Find SubTemplate{0}.Please Check File", subtemplatename));
                 }
             }
             //<loop>
@@ -414,7 +446,7 @@ namespace Natsuhime
                         "{0}.{1}{2}",
                         m.Groups[2].ToString(),
                         CutString(m.Groups[3].ToString(), 0, 1).ToUpper(),
-                        m.Groups[3].ToString().Substring(1, 
+                        m.Groups[3].ToString().Substring(1,
                         m.Groups[3].ToString().Length - 1)
                         )
                         );
@@ -424,10 +456,10 @@ namespace Natsuhime
                     source.Replace(
                         m.Groups[0].ToString(),
                         string.Format(
-                        "\" + {0}.{1}{2}.ToString().Trim() + \"", 
-                        m.Groups[2].ToString(), 
-                        CutString(m.Groups[3].ToString(), 0, 1).ToUpper(), 
-                        m.Groups[3].ToString().Substring(1, 
+                        "\" + {0}.{1}{2}.ToString().Trim() + \"",
+                        m.Groups[2].ToString(),
+                        CutString(m.Groups[3].ToString(), 0, 1).ToUpper(),
+                        m.Groups[3].ToString().Substring(1,
                         m.Groups[3].ToString().Length - 1)));
                 }
             }
@@ -502,7 +534,7 @@ namespace Natsuhime
                 {
                     source.Replace(m.Groups[0].ToString(),
                         string.Format(
-                        "\" + {0}.ToString() + \"", 
+                        "\" + {0}.ToString() + \"",
                         m.Groups[2].ToString().Trim()
                         )
                         );
