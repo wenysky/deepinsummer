@@ -20,7 +20,7 @@ namespace Natsuhime
             //解析模板引用
             r[0] = new Regex(@"<%template ([^\[\]\{\}\s]+)%>", options);
 
-            r[1] = new Regex(@"<%loop ((\(([a-zA-Z\<\>]+)\) )?)([^\[\]\{\}\s]+) ([^\[\]\{\}\s]+)%>", options);
+            r[1] = new Regex(@"<%loop ((\(([a-zA-Z\<\>\,]+)\) )?)([^\[\]\{\}\s]+) ([^\[\]\{\}\s]+)%>", options);
 
             r[2] = new Regex(@"<%\/loop%>", options);
 
