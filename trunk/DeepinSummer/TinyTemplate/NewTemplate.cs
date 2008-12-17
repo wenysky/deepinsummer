@@ -81,6 +81,7 @@ namespace Natsuhime
             r[23] = new Regex(@"<%continue%>");
             r[24] = new Regex(@"<%break%>");
         }
+        string InheritsPrefix_Default;
         string Inherits_Default;
         string Import_Default;
         /// <summary>
@@ -91,9 +92,14 @@ namespace Natsuhime
         /// ASPX文件生成目录
         /// </summary>
         string PageFileFilePath;
-        public NewTemplate(string defaultinherits, string defaultimport)
+
+        #region 属性
+        public string Productversion { get; set; }
+        public string Productname { get; set; }
+        #endregion
+        public NewTemplate(string defaultinheritsprefix, string defaultimport)
         {
-            this.Inherits_Default = defaultinherits.Trim();
+            this.InheritsPrefix_Default = defaultinheritsprefix.Trim();
             this.Import_Default = defaultimport.Trim();
         }
         public void CreateFromFolder(string templatefilefolder, string pagefilefolder)
@@ -136,6 +142,7 @@ namespace Natsuhime
             //读取主模板,匹配后生成.
             foreach (string file in maintemplatefilelist)
             {
+                this.Inherits_Default = this.InheritsPrefix_Default + "." + Path.GetFileNameWithoutExtension(file);
                 string result = CreatMainTemplate(file);
                 File.WriteAllText(
                     Path.Combine(this.PageFileFilePath, Path.GetFileNameWithoutExtension(file) + ".aspx"),
@@ -233,7 +240,7 @@ namespace Natsuhime
                 }
 
                 //页面混合script入口
-                source.Append("\r\n<script runat=\"server\">\r\noverride protected void OnInit(EventArgs e)\r\n{\r\n\tbase.OnInit(e);\r\n");
+                source.Append("\r\n<script runat=\"server\">\r\noverride protected void OnInit(EventArgs e)\r\n{\r\n\t/*\r\n\tThis file is cache file, was created by LiteCMS.CN Template Engine.\r\n\t此文件为缓存文件,由 LiteCMS.CN 模板引擎生成.\r\n\t*/\r\n\tbase.OnInit(e);\r\n");
             }
 
             //处理Csharp语句
@@ -263,6 +270,7 @@ namespace Natsuhime
 
             if (layer == 1)
             {
+                source.Append("\r\n\tResponse.Write(templateBuilder.ToString());");
                 source.Append("\r\n}\r\n</script>");
             }
 
@@ -280,19 +288,17 @@ namespace Natsuhime
             {
                 //TODO 子模板载入问题,现在的子模板无法嵌套,因为有的子模板载入缓存顺序不一致.
                 string subtemplatename = m.Groups[1].ToString();
-                if (reftemplatecache.ContainsKey(subtemplatename))
-                {
-                    iscodeline = true;
-                    source.Replace(
-                        m.Groups[0].ToString(),
-                        string.Format("\r\n{0}\r\n", reftemplatecache[subtemplatename])
-                        );
-                }
-                else
+                if (!reftemplatecache.ContainsKey(subtemplatename))
                 {
                     LoadRefTemplateCache(subtemplatename);
                     //throw new Exception(string.Format("Could NOT Find SubTemplate{0}.Please Check File", subtemplatename));
+
                 }
+                iscodeline = true;
+                source.Replace(
+                    m.Groups[0].ToString(),
+                    string.Format("\r\n{0}\r\n", reftemplatecache[subtemplatename])
+                    );
             }
             //<loop>
             foreach (Match m in r[1].Matches(source.ToString()))
@@ -416,7 +422,7 @@ namespace Natsuhime
                 iscodeline = true;
                 source.Replace(
                     m.Groups[0].ToString(),
-                    string.Format("System.Web.HttpUtility.UrlEncode({0})", m.Groups[2].ToString())
+                    string.Format("System.Web.HttpUtility.UrlEncode({0});", m.Groups[2].ToString())
                     );
             }
             //DateToStr(,)
@@ -426,9 +432,9 @@ namespace Natsuhime
                 source.Replace(
                     m.Groups[0].ToString(),
                     string.Format(
-                    "System.Convert.ToDateTime({0}).ToString(\"{1}\")",
+                    "System.Convert.ToDateTime({0}).ToString(\"{1}\");",
                     m.Groups[2].ToString(),
-                    m.Groups[3].ToString().Replace("\\\"", string.Empty)));
+                    m.Groups[3].ToString().Replace("\\\"", string.Empty)).Trim());
             }
             //substring() TODO
             foreach (Match m in r[20].Matches(source.ToString()))
@@ -437,7 +443,7 @@ namespace Natsuhime
                 source.Replace(
                     m.Groups[0].ToString(),
                     string.Format(
-                    "\ttemplateBuilder.Append(Utils.GetSubString({0},{1},{2},\"{3}\"));",
+                    "Utils.GetSubString({0},{1},{2},\"{3}\");",
                     m.Groups[2].ToString(),
                     m.Groups[3].ToString(),
                     m.Groups[4].ToString(),
@@ -478,10 +484,20 @@ namespace Natsuhime
             foreach (Match m in r[12].Matches(source.ToString()))
             {
                 //throw new Exception("未完成");
-                source.Replace(
+                if (iscodeline)
+                {
+                    source.Replace(
+                       m.Groups[0].ToString(),
+                       "DNTRequest.GetString(\"" + m.Groups[2].ToString() + "\")"
+                       );
+                }
+                else
+                {
+                    source.Replace(
                     m.Groups[0].ToString(),
-                    "DNTRequest.GetString(\"" + m.Groups[2].ToString() + "\")"
+                    string.Format("\" + DNTRequest.GetString(\"{0}\") + \"", m.Groups[2])
                     );
+                }
             }
 #warning    解析{var[a]} TODU 未测试
             foreach (Match m in r[13].Matches(source.ToString()))
@@ -527,9 +543,15 @@ namespace Natsuhime
             //ReplaceSpecialTemplate(AspxfilePath, AspxfilePath, source.ToString()); TODO
             foreach (Match m in r[14].Matches(source.ToString()))
             {
-                if (m.Groups[0].ToString() == "{commonversion}")
+                if (m.Groups[0].ToString() == "{productversion}" || m.Groups[0].ToString() == "{forumversion}")
                 {
-                    source.Replace(m.Groups[0].ToString(), GetAssemblyVersion());
+                    string productversion = Productversion.Trim() == string.Empty ? GetAssemblyVersion() : this.Productversion;
+                    source.Replace(m.Groups[0].ToString(), productversion);
+                }
+                else if (m.Groups[0].ToString() == "{productname}" || m.Groups[0].ToString() == "{forumproductname}")
+                {
+                    string productname = Productname.Trim() == string.Empty ? GetAssemblyProductName() : this.Productname;
+                    source.Replace(m.Groups[0].ToString(), productname);
                 }
             }
             //普通变量{}
@@ -581,7 +603,7 @@ namespace Natsuhime
                         if (line.Trim() == string.Empty)
                             continue;
                         //htmltext.Append(string.Format("\ttemplateBuilder.Append(\"{0}\\r\\n\");\r\n", line));
-                        htmltext.Append(string.Format("\tResponse.Write(\"{0}\\r\\n\");\r\n", line));
+                        htmltext.Append(string.Format("\ttemplateBuilder.Append(\"{0}\\r\\n\");\r\n", line));
                     }
                     return htmltext.ToString();
                 }
@@ -755,6 +777,14 @@ namespace Natsuhime
         public static string GetAssemblyVersion()
         {
             return string.Format("{0}.{1}.{2}", AssemblyFileVersion.FileMajorPart, AssemblyFileVersion.FileMinorPart, AssemblyFileVersion.FileBuildPart);
+        }
+        /// <summary>
+        /// 获得Assembly产品名称
+        /// </summary>
+        /// <returns></returns>
+        public static string GetAssemblyProductName()
+        {
+            return AssemblyFileVersion.ProductName;
         }
         #endregion
     }
