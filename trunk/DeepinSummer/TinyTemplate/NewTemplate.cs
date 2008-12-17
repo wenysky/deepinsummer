@@ -82,6 +82,7 @@ namespace Natsuhime
             r[24] = new Regex(@"<%break%>");
         }
         string Inherits_Default;
+        string Import_Default;
         /// <summary>
         /// 读取模板文件的目录
         /// </summary>
@@ -90,9 +91,10 @@ namespace Natsuhime
         /// ASPX文件生成目录
         /// </summary>
         string PageFileFilePath;
-        public NewTemplate(string defaultinherits)
+        public NewTemplate(string defaultinherits, string defaultimport)
         {
-            this.Inherits_Default = defaultinherits;
+            this.Inherits_Default = defaultinherits.Trim();
+            this.Import_Default = defaultimport.Trim();
         }
         public void CreateFromFolder(string templatefilefolder, string pagefilefolder)
         {
@@ -220,6 +222,14 @@ namespace Natsuhime
                     extNamespace = string.Format("\r\n<%@ Import namespace=\"{0}\" %>", m.Groups[1].ToString());
                     SourceText.Replace(m.Groups[0].ToString(), string.Empty);
                     source.Append(extNamespace);
+                }
+                if (this.Import_Default != string.Empty)
+                {
+                    string[] importnamespace = this.Import_Default.Split(',');
+                    foreach (string names in importnamespace)
+                    {
+                        source.Append(string.Format("\r\n<%@ Import namespace=\"{0}\" %>", names));
+                    }
                 }
 
                 //页面混合script入口
@@ -464,19 +474,19 @@ namespace Natsuhime
                 }
             }
 
-            //{request[a]} TODO
+#warning    {request[a]} TODO:For Discuz!NT
             foreach (Match m in r[12].Matches(source.ToString()))
             {
-                throw new Exception("未完成");
+                //throw new Exception("未完成");
                 source.Replace(
                     m.Groups[0].ToString(),
                     "DNTRequest.GetString(\"" + m.Groups[2].ToString() + "\")"
                     );
             }
-            //解析{var[a]} TODU
+#warning    解析{var[a]} TODU 未测试
             foreach (Match m in r[13].Matches(source.ToString()))
             {
-                throw new Exception("未测试的标签");
+                //throw new Exception("未测试的标签");
                 if (iscodeline)
                 {
                     if (IsNumeric(m.Groups[3].ToString()))
