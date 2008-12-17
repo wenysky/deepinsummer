@@ -1,4 +1,9 @@
-﻿using System;
+﻿/*****************
+// NewTemplate.cs
+// Edit by wysky
+ *****************/
+
+using System;
 using System.IO;
 using System.Text.RegularExpressions;
 using System.Text;
