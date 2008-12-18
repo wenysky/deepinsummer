@@ -244,8 +244,9 @@ namespace Natsuhime
                     }
                 }
 
+                string currentfile = inherits.Substring(inherits.LastIndexOf('.') + 1) + ".htm";
                 //页面混合script入口
-                source.Append("\r\n<script runat=\"server\">\r\noverride protected void OnInit(EventArgs e)\r\n{\r\n\t/*\r\n\tThis file is cache file, was created by LiteCMS.CN Template Engine.\r\n\t此文件为缓存文件,由 LiteCMS.CN 模板引擎生成.\r\n\t*/\r\n\tbase.OnInit(e);\r\n");
+                source.Append("\r\n<script runat=\"server\">\r\noverride protected void OnInit(EventArgs e)\r\n{\r\n\t/*\r\n\tThis is a cached-file of template(\"\\templates\\" + currentfile + "\"), it was created by LiteCMS.CN Template Engine.\r\n\tPlease do NOT edit it.\r\n\t此文件为模板文件的缓存(\"\\templates\\" + currentfile + "\"),由 LiteCMS.CN 模板引擎生成.\r\n\t所以请不要编辑此文件.\r\n\t*/\r\n\tbase.OnInit(e);\r\n");
             }
 
             //处理Csharp语句
