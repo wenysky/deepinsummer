@@ -256,6 +256,8 @@ namespace Natsuhime
             //}
 
             SourceText.Replace("\r\n", "\r\r\r");
+            SourceText.Replace("\n", "\r\r\r");
+            SourceText.Replace("\r", "\r\r\r");
             SourceText.Replace("<%", "\r\r\n<%");
             SourceText.Replace("%>", "%>\r\r\n");
 
