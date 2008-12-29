@@ -5,7 +5,7 @@ using System.Xml;
 
 namespace Natsuhime
 {
-    class XmlHelper
+    public class XmlHelper
     {
         /// <summary>
         /// 在根节点下添加父节点
@@ -140,7 +140,7 @@ namespace Natsuhime
         #endregion
     }
 
-    class XmlAttribInfo
+    public class XmlAttribInfo
     {
         private string m_Name;
         public string Name
@@ -154,6 +154,15 @@ namespace Natsuhime
         {
             get { return m_Value; }
             set { m_Value = value; }
+        }
+
+        public XmlAttribInfo()
+        {
+        }
+        public XmlAttribInfo(string attribname, string value)
+        {
+            this.m_Name = attribname;
+            this.m_Value = value;
         }
     }
 }

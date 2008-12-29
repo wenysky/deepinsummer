@@ -45,9 +45,12 @@ namespace TestForm
 
         private void btnCreate_Click(object sender, EventArgs e)
         {
-            NewTemplate nt = new NewTemplate("xxoo");
+            string namespaces = "System.Data,Discuz.Common,Discuz.Forum,Discuz.Entity";
+            NewTemplate nt = new NewTemplate("Discuz.Web", namespaces);
+            nt.Productname = "Discuz!NT 2.5 (.net Framework 2.x/3.x)";
+            nt.Productversion = "2.5.0";
             nt.CreateFromFolder(tbxTemplateFolder.Text, tbxPagefileFolder.Text);
-
+            MessageBox.Show("完成!");
         }
 
         private void btnOldVersion_Click(object sender, EventArgs e)

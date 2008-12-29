@@ -65,6 +65,7 @@
             this.tbxTemplateFolder.Name = "tbxTemplateFolder";
             this.tbxTemplateFolder.Size = new System.Drawing.Size(283, 21);
             this.tbxTemplateFolder.TabIndex = 2;
+            this.tbxTemplateFolder.Text = "F:\\Doctments\\Works\\Comsenz\\DotNet\\Discuz!NT\\3\\Discuz.Web\\templates\\default\\";
             // 
             // tbxPagefileFolder
             // 
@@ -72,6 +73,7 @@
             this.tbxPagefileFolder.Name = "tbxPagefileFolder";
             this.tbxPagefileFolder.Size = new System.Drawing.Size(283, 21);
             this.tbxPagefileFolder.TabIndex = 3;
+            this.tbxPagefileFolder.Text = "G:\\temptemp\\aspx\\new";
             // 
             // label1
             // 
