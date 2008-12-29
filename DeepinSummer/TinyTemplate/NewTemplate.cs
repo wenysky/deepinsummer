@@ -553,12 +553,12 @@ namespace Natsuhime
             {
                 if (m.Groups[0].ToString() == "{productversion}" || m.Groups[0].ToString() == "{forumversion}")
                 {
-                    string productversion = Productversion.Trim() == string.Empty ? GetAssemblyVersion() : this.Productversion;
+                    string productversion = (this.Productversion == null || this.Productversion.Trim() == string.Empty) ? GetAssemblyVersion() : this.Productversion;
                     source.Replace(m.Groups[0].ToString(), productversion);
                 }
                 else if (m.Groups[0].ToString() == "{productname}" || m.Groups[0].ToString() == "{forumproductname}")
                 {
-                    string productname = Productname.Trim() == string.Empty ? GetAssemblyProductName() : this.Productname;
+                    string productname = (this.Productname == null || this.Productname.Trim() == string.Empty) ? GetAssemblyProductName() : this.Productname;
                     source.Replace(m.Groups[0].ToString(), productname);
                 }
             }
