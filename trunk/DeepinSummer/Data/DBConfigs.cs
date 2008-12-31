@@ -39,7 +39,7 @@ namespace Natsuhime.Data
             return m_configinfo;
         }
 
-        
+
         /// <summary>
         /// 序列化配置信息为XML
         /// </summary>
