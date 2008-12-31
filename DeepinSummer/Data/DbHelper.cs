@@ -105,7 +105,14 @@ namespace Natsuhime.Data
             {
                 if (m_connectionstring == null)
                 {
-                    m_connectionstring = DbConfigs.GetConfig().Dbconnectstring;
+                    if (DbConfigs.GetConfig().Dbconnectstring.StartsWith("~"))
+                    {
+                        m_connectionstring = "Data Source=" + Natsuhime.Common.Utils.GetMapPath(DbConfigs.GetConfig().Dbconnectstring);
+                    }
+                    else
+                    {
+                        m_connectionstring = DbConfigs.GetConfig().Dbconnectstring;
+                    }
                 }
                 return m_connectionstring;
             }
