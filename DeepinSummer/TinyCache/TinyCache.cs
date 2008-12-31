@@ -5,27 +5,25 @@ namespace Natsuhime
 {
     public class TinyCache
     {
-        private int m_TimeOut = 1440;//默认缓存存活期为1440分钟(24小时)
-
-        /// <summary>
-        /// 设置到期相对时间[单位：／分钟]
-        /// </summary>
-        public int TimeOut
-        {
-            get { return m_TimeOut; }
-            set { m_TimeOut = value > 0 ? value : 1440; }
-        }
-
-
         private static System.Web.Caching.Cache webcache = System.Web.HttpRuntime.Cache;
 
+        private bool _IsWriteLogs = true;
+        /// <summary>
+        /// 是否记录缓存到日志文件(默认是)
+        /// </summary>
+        public bool IsWriteLogs
+        {
+            get { return _IsWriteLogs; }
+            set { _IsWriteLogs = value; }
+        }
 
         /// <summary>
         /// 加入当前对象到缓存中
         /// </summary>
         /// <param name="CacheName">对象的键值</param>
         /// <param name="o">缓存的对象</param>
-        public void AddObject(string CacheName, object o)
+        /// <param name="TimeOut">过期时间(0表示无限期)</param>
+        public void AddObject(string CacheName, object o, int TimeOut)
         {
 
             if (CacheName == null || CacheName.Length == 0 || o == null)
@@ -35,13 +33,13 @@ namespace Natsuhime
 
             CacheItemRemovedCallback callBack = new CacheItemRemovedCallback(CacheOnRemove);
 
-            if (TimeOut == 6000)
+            if (TimeOut > 0)
             {
-                webcache.Insert(CacheName, o, null, DateTime.MaxValue, TimeSpan.Zero, System.Web.Caching.CacheItemPriority.High, callBack);
+                webcache.Insert(CacheName, o, null, DateTime.Now.AddMinutes(TimeOut), System.Web.Caching.Cache.NoSlidingExpiration, System.Web.Caching.CacheItemPriority.High, callBack);
             }
             else
             {
-                webcache.Insert(CacheName, o, null, DateTime.Now.AddMinutes(TimeOut), System.Web.Caching.Cache.NoSlidingExpiration, System.Web.Caching.CacheItemPriority.High, callBack);
+                webcache.Insert(CacheName, o, null, DateTime.MaxValue, TimeSpan.Zero, System.Web.Caching.CacheItemPriority.High, callBack);
             }
         }
 
@@ -51,7 +49,8 @@ namespace Natsuhime
         /// <param name="CacheName">对象的键值</param>
         /// <param name="o">缓存的对象</param>
         /// <param name="files">监视的路径文件</param>
-        public void AddObjectWithFileChange(string CacheName, object o, string[] files)
+        /// <param name="TimeOut">过期时间(0表示无限期)</param>
+        public void AddObjectWithFileChange(string CacheName, object o, string[] files, int TimeOut)
         {
             if (CacheName == null || CacheName.Length == 0 || o == null)
             {
@@ -61,8 +60,14 @@ namespace Natsuhime
             CacheItemRemovedCallback callBack = new CacheItemRemovedCallback(CacheOnRemove);
 
             CacheDependency dep = new CacheDependency(files, DateTime.Now);
-
-            webcache.Insert(CacheName, o, dep, System.DateTime.Now.AddHours(TimeOut), System.Web.Caching.Cache.NoSlidingExpiration, System.Web.Caching.CacheItemPriority.High, callBack);
+            if (TimeOut > 0)
+            {
+                webcache.Insert(CacheName, o, dep, System.DateTime.Now.AddMinutes(TimeOut), System.Web.Caching.Cache.NoSlidingExpiration, System.Web.Caching.CacheItemPriority.High, callBack);
+            }
+            else
+            {
+                webcache.Insert(CacheName, o, dep, System.DateTime.MaxValue, System.Web.Caching.Cache.NoSlidingExpiration, System.Web.Caching.CacheItemPriority.High, callBack);
+            }
         }
 
         /// <summary>
@@ -71,7 +76,8 @@ namespace Natsuhime
         /// <param name="CacheName">对象的键值</param>
         /// <param name="o">缓存的对象</param>
         /// <param name="dependKey">依赖关联的键值</param>
-        public void AddObjectWithDepend(string CacheName, object o, string[] DependKey)
+        /// <param name="TimeOut">过期时间(0表示无限期)</param>
+        public void AddObjectWithDepend(string CacheName, object o, string[] DependKey, int TimeOut)
         {
             if (CacheName == null || CacheName.Length == 0 || o == null)
             {
@@ -81,8 +87,14 @@ namespace Natsuhime
             CacheItemRemovedCallback callBack = new CacheItemRemovedCallback(CacheOnRemove);
 
             CacheDependency dep = new CacheDependency(null, DependKey, DateTime.Now);
-
-            webcache.Insert(CacheName, o, dep, System.DateTime.Now.AddMinutes(TimeOut), System.Web.Caching.Cache.NoSlidingExpiration, System.Web.Caching.CacheItemPriority.High, callBack);
+            if (TimeOut > 0)
+            {
+                webcache.Insert(CacheName, o, dep, System.DateTime.Now.AddMinutes(TimeOut), System.Web.Caching.Cache.NoSlidingExpiration, System.Web.Caching.CacheItemPriority.High, callBack);
+            }
+            else
+            {
+                webcache.Insert(CacheName, o, dep, System.DateTime.MaxValue, System.Web.Caching.Cache.NoSlidingExpiration, System.Web.Caching.CacheItemPriority.High, callBack);
+            }
         }
 
 
@@ -126,27 +138,32 @@ namespace Natsuhime
         /// <param name="reason"></param>
         public void CacheOnRemove(string Key, object Val, CacheItemRemovedReason Reason)
         {
-            switch (Reason)
-            {
-                case CacheItemRemovedReason.DependencyChanged:
-                    break;
-                case CacheItemRemovedReason.Expired:
-                    {
-                        break;
-                    }
-                case CacheItemRemovedReason.Removed:
-                    {
-                        break;
-                    }
-                case CacheItemRemovedReason.Underused:
-                    {
-                        break;
-                    }
-                default: break;
-            }
+            //switch (Reason)
+            //{
+            //    case CacheItemRemovedReason.DependencyChanged:
+            //        break;
+            //    case CacheItemRemovedReason.Expired:
+            //        {
+            //            break;
+            //        }
+            //    case CacheItemRemovedReason.Removed:
+            //        {
+            //            break;
+            //        }
+            //    case CacheItemRemovedReason.Underused:
+            //        {
+            //            break;
+            //        }
+            //    default: break;
+            //}
             //如需要使用缓存日志,则需要使用下面代码
             //myLogVisitor.WriteLog(this,key,val,reason);
-
+            if (this._IsWriteLogs)
+            {
+                string logfilepath = Common.Utils.GetMapPath(string.Format("~/LiteCMSLogs/{0}.txt", DateTime.Now.ToString("yyMMdd")));
+                string message = string.Format("Key:{0},Value:{1},Reason:{2}", Key, Val == null ? "" : Val.ToString(), Reason.ToString());
+                Logs.TinyLogs.InsertLog(logfilepath, DateTime.Now, "Cache_Removed", message);
+            }
         }
     }
 }
