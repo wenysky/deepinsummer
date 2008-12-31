@@ -52,6 +52,7 @@
     </Compile>
     <Compile Include="HttpModule\HttpModule.cs" />
     <Compile Include="LoginUtility\LoginDZ.cs" />
+    <Compile Include="Logs\TinyLogs.cs" />
     <Compile Include="RegexUtility\RegexUtility.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TinyCache\TinyCache.cs" />
