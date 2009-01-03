@@ -160,8 +160,9 @@ namespace Natsuhime
             //myLogVisitor.WriteLog(this,key,val,reason);
             if (this._IsWriteLogs)
             {
-                string logfilepath = Common.Utils.GetMapPath(string.Format("~/LiteCMSLogs/{0}.txt", DateTime.Now.ToString("yyMMdd")));
-                string message = string.Format("Key:{0},Value:{1},Reason:{2}", Key, Val == null ? "" : Val.ToString(), Reason.ToString());
+                string logfilepath = Common.Utils.GetMapPath(string.Format("~\\LiteCMSLogs\\{0}.txt", DateTime.Now.ToString("yyMMdd")));
+                Val = Val == null ? "" : Val.ToString();
+                string message = string.Format("Key:{0},Value:{1},Reason:{2}", Key, Val, Reason.ToString());
                 Logs.TinyLogs.InsertLog(logfilepath, DateTime.Now, "Cache_Removed", message);
             }
         }

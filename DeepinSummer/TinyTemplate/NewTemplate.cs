@@ -480,11 +480,17 @@ namespace Natsuhime
                     source.Replace(
                         m.Groups[0].ToString(),
                         string.Format(
-                        "\" + {0}.{1}{2}.ToString().Trim() + \"",
-                        m.Groups[2].ToString(),
-                        CutString(m.Groups[3].ToString(), 0, 1).ToUpper(),
-                        m.Groups[3].ToString().Substring(1,
-                        m.Groups[3].ToString().Length - 1)));
+                            "\");\r\n\ttemplateBuilder.Append({0}.{1}{2}.ToString().Trim());\r\n\ttemplateBuilder.Append(\"",
+                            m.Groups[2].ToString(),
+                            CutString(
+                                m.Groups[3].ToString(),
+                                0,
+                                1).ToUpper(),
+                            m.Groups[3].ToString().Substring(1, m.Groups[3].ToString().Length - 1)
+                            )
+                        );
+#warning 这里如果是连续两个{var.a}链接的话,中间会产生一个空白的"",临时替换掉;
+                    source.Replace("\r\n\ttemplateBuilder.Append(\"\");", "");
                 }
             }
 
@@ -503,7 +509,7 @@ namespace Natsuhime
                 {
                     source.Replace(
                     m.Groups[0].ToString(),
-                    string.Format("\" + DNTRequest.GetString(\"{0}\") + \"", m.Groups[2])
+                    string.Format("\");\r\n\ttemplateBuilder.Append(DNTRequest.GetString(\"{0}\"));\r\n\ttemplateBuilder.Append(\"", m.Groups[2])
                     );
                 }
             }
@@ -533,17 +539,17 @@ namespace Natsuhime
                 {
                     if (IsNumeric(m.Groups[3].ToString()))
                     {
-                        source.Replace(m.Groups[0].ToString(), string.Format("\" + {0}[{1}].ToString().Trim() + \"", m.Groups[2].ToString(), m.Groups[3].ToString()));
+                        source.Replace(m.Groups[0].ToString(), string.Format("\");\r\n\ttemplateBuilder.Append({0}[{1}].ToString().Trim());\r\n\ttemplateBuilder.Append(\"", m.Groups[2].ToString(), m.Groups[3].ToString()));
                     }
                     else
                     {
                         if (m.Groups[3].ToString() == "_id")
                         {
-                            source.Replace(m.Groups[0].ToString(), string.Format("\" + {0}__loop__id.ToString() + \"", m.Groups[2].ToString()));
+                            source.Replace(m.Groups[0].ToString(), string.Format("\");\r\n\ttemplateBuilder.Append({0}__loop__id.ToString());\r\n\ttemplateBuilder.Append(\"", m.Groups[2].ToString()));
                         }
                         else
                         {
-                            source.Replace(m.Groups[0].ToString(), string.Format("\" + {0}[\"{1}\"].ToString().Trim() + \"", m.Groups[2].ToString(), m.Groups[3].ToString()));
+                            source.Replace(m.Groups[0].ToString(), string.Format("\");\r\n\ttemplateBuilder.Append({0}[\"{1}\"].ToString().Trim());\r\n\ttemplateBuilder.Append(\"", m.Groups[2].ToString(), m.Groups[3].ToString()));
                         }
                     }
                 }
@@ -574,7 +580,7 @@ namespace Natsuhime
                 {
                     source.Replace(m.Groups[0].ToString(),
                         string.Format(
-                        "\" + {0}.ToString() + \"",
+                        "\");\r\n\ttemplateBuilder.Append({0}.ToString());\r\n\ttemplateBuilder.Append(\"",
                         m.Groups[2].ToString().Trim()
                         )
                         );
