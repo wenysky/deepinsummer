@@ -244,8 +244,9 @@ namespace Discuz.Wysky.Tools
                     }
                 }
 
+                string currentfile = inherits.Substring(inherits.LastIndexOf('.') + 1) + ".htm";
                 //页面混合script入口
-                source.Append("\r\n<script runat=\"server\">\r\noverride protected void OnInit(EventArgs e)\r\n{\r\n\t/*\r\n\tThis file is cache file, was created by LiteCMS.CN Template Engine.\r\n\t此文件为缓存文件,由 LiteCMS.CN 模板引擎生成.\r\n\t*/\r\n\tbase.OnInit(e);\r\n");
+                source.Append("\r\n<script runat=\"server\">\r\noverride protected void OnInit(EventArgs e)\r\n{\r\n\t/*\r\n\tThis is a cached-file of template(\"\\templates\\templatename\\" + currentfile + "\"), it was created by LiteCMS.CN Template Engine.\r\n\tPlease do NOT edit it.\r\n\t此文件为模板文件的缓存(\"\\templates\\模板名\\" + currentfile + "\"),由 LiteCMS.CN 模板引擎生成.\r\n\t所以请不要编辑此文件.\r\n\t*/\r\n\tbase.OnInit(e);\r\n");
             }
 
             //处理Csharp语句
@@ -255,6 +256,8 @@ namespace Discuz.Wysky.Tools
             //}
 
             SourceText.Replace("\r\n", "\r\r\r");
+            SourceText.Replace("\n", "\r\r\r");
+            SourceText.Replace("\r", "\r\r\r");
             SourceText.Replace("<%", "\r\r\n<%");
             SourceText.Replace("%>", "%>\r\r\n");
 
@@ -477,11 +480,17 @@ namespace Discuz.Wysky.Tools
                     source.Replace(
                         m.Groups[0].ToString(),
                         string.Format(
-                        "\" + {0}.{1}{2}.ToString().Trim() + \"",
-                        m.Groups[2].ToString(),
-                        CutString(m.Groups[3].ToString(), 0, 1).ToUpper(),
-                        m.Groups[3].ToString().Substring(1,
-                        m.Groups[3].ToString().Length - 1)));
+                            "\");\r\n\ttemplateBuilder.Append({0}.{1}{2}.ToString().Trim());\r\n\ttemplateBuilder.Append(\"",
+                            m.Groups[2].ToString(),
+                            CutString(
+                                m.Groups[3].ToString(),
+                                0,
+                                1).ToUpper(),
+                            m.Groups[3].ToString().Substring(1, m.Groups[3].ToString().Length - 1)
+                            )
+                        );
+#warning 这里如果是连续两个{var.a}链接的话,中间会产生一个空白的"",临时替换掉;
+                    source.Replace("\r\n\ttemplateBuilder.Append(\"\");", "");
                 }
             }
 
@@ -500,7 +509,7 @@ namespace Discuz.Wysky.Tools
                 {
                     source.Replace(
                     m.Groups[0].ToString(),
-                    string.Format("\" + DNTRequest.GetString(\"{0}\") + \"", m.Groups[2])
+                    string.Format("\");\r\n\ttemplateBuilder.Append(DNTRequest.GetString(\"{0}\"));\r\n\ttemplateBuilder.Append(\"", m.Groups[2])
                     );
                 }
             }
@@ -530,17 +539,17 @@ namespace Discuz.Wysky.Tools
                 {
                     if (IsNumeric(m.Groups[3].ToString()))
                     {
-                        source.Replace(m.Groups[0].ToString(), string.Format("\" + {0}[{1}].ToString().Trim() + \"", m.Groups[2].ToString(), m.Groups[3].ToString()));
+                        source.Replace(m.Groups[0].ToString(), string.Format("\");\r\n\ttemplateBuilder.Append({0}[{1}].ToString().Trim());\r\n\ttemplateBuilder.Append(\"", m.Groups[2].ToString(), m.Groups[3].ToString()));
                     }
                     else
                     {
                         if (m.Groups[3].ToString() == "_id")
                         {
-                            source.Replace(m.Groups[0].ToString(), string.Format("\" + {0}__loop__id.ToString() + \"", m.Groups[2].ToString()));
+                            source.Replace(m.Groups[0].ToString(), string.Format("\");\r\n\ttemplateBuilder.Append({0}__loop__id.ToString());\r\n\ttemplateBuilder.Append(\"", m.Groups[2].ToString()));
                         }
                         else
                         {
-                            source.Replace(m.Groups[0].ToString(), string.Format("\" + {0}[\"{1}\"].ToString().Trim() + \"", m.Groups[2].ToString(), m.Groups[3].ToString()));
+                            source.Replace(m.Groups[0].ToString(), string.Format("\");\r\n\ttemplateBuilder.Append({0}[\"{1}\"].ToString().Trim());\r\n\ttemplateBuilder.Append(\"", m.Groups[2].ToString(), m.Groups[3].ToString()));
                         }
                     }
                 }
@@ -550,12 +559,12 @@ namespace Discuz.Wysky.Tools
             {
                 if (m.Groups[0].ToString() == "{productversion}" || m.Groups[0].ToString() == "{forumversion}")
                 {
-                    string productversion = Productversion.Trim() == string.Empty ? GetAssemblyVersion() : this.Productversion;
+                    string productversion = (this.Productversion == null || this.Productversion.Trim() == string.Empty) ? GetAssemblyVersion() : this.Productversion;
                     source.Replace(m.Groups[0].ToString(), productversion);
                 }
                 else if (m.Groups[0].ToString() == "{productname}" || m.Groups[0].ToString() == "{forumproductname}")
                 {
-                    string productname = Productname.Trim() == string.Empty ? GetAssemblyProductName() : this.Productname;
+                    string productname = (this.Productname == null || this.Productname.Trim() == string.Empty) ? GetAssemblyProductName() : this.Productname;
                     source.Replace(m.Groups[0].ToString(), productname);
                 }
             }
@@ -571,7 +580,7 @@ namespace Discuz.Wysky.Tools
                 {
                     source.Replace(m.Groups[0].ToString(),
                         string.Format(
-                        "\" + {0}.ToString() + \"",
+                        "\");\r\n\ttemplateBuilder.Append({0}.ToString());\r\n\ttemplateBuilder.Append(\"",
                         m.Groups[2].ToString().Trim()
                         )
                         );
