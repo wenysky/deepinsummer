@@ -1,0 +1,5 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <StartArguments>F:\Doctments\Works\Comsenz\DotNet\Discuz!NT\3\Discuz.Web\templates\default F:\Doctments\Works\Comsenz\DotNet\Discuz!NT\3\Discuz.Web\aspx\1</StartArguments>
+  </PropertyGroup>
+</Project>
