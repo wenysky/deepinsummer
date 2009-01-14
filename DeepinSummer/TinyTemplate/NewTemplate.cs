@@ -149,10 +149,15 @@ namespace Natsuhime
             {
                 this.Inherits_Default = this.InheritsPrefix_Default + "." + Path.GetFileNameWithoutExtension(file);
                 string result = CreatMainTemplate(file);
+                string aspxfilepath = Path.Combine(this.PageFileFilePath, Path.GetFileNameWithoutExtension(file) + ".aspx");
+                //using (StreamWriter sw = new StreamWriter(aspxfilepath, false, Encoding.UTF8))
+                //{
+                //    sw.Write(result);
+                //}
                 File.WriteAllText(
-                    Path.Combine(this.PageFileFilePath, Path.GetFileNameWithoutExtension(file) + ".aspx"),
+                    aspxfilepath,
                     result,
-                    Encoding.UTF8
+                    new UTF8Encoding(true, true)
                     );
             }
             System.Diagnostics.Debug.WriteLine("生成完毕!");
