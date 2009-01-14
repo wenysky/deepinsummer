@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
+using System.Web;
 
 namespace Natsuhime.Web
 {
@@ -209,6 +210,46 @@ namespace Natsuhime.Web
             content = Regex.Replace(content, @"(\<|\s+)o([a-z]+\s?=)", "$1$2", RegexOptions.IgnoreCase);
             content = Regex.Replace(content, @"(script|frame|form|meta|behavior|style)([\s|:|>])+", "$1.$2", RegexOptions.IgnoreCase);
             return content;
-        }        
+        }
+
+        /// <summary>
+        /// 返回 HTML 字符串的编码结果
+        /// </summary>
+        /// <param name="str">字符串</param>
+        /// <returns>编码结果</returns>
+        public static string HtmlEncode(string str)
+        {
+            return HttpUtility.HtmlEncode(str);
+        }
+
+        /// <summary>
+        /// 返回 HTML 字符串的解码结果
+        /// </summary>
+        /// <param name="str">字符串</param>
+        /// <returns>解码结果</returns>
+        public static string HtmlDecode(string str)
+        {
+            return HttpUtility.HtmlDecode(str);
+        }
+
+        /// <summary>
+        /// 返回 URL 字符串的编码结果
+        /// </summary>
+        /// <param name="str">字符串</param>
+        /// <returns>编码结果</returns>
+        public static string UrlEncode(string str)
+        {
+            return HttpUtility.UrlEncode(str);
+        }
+
+        /// <summary>
+        /// 返回 URL 字符串的编码结果
+        /// </summary>
+        /// <param name="str">字符串</param>
+        /// <returns>解码结果</returns>
+        public static string UrlDecode(string str)
+        {
+            return HttpUtility.UrlDecode(str);
+        }
     }
 }
