@@ -68,6 +68,7 @@
     <Compile Include="TinyTemplate\Template.cs" />
     <Compile Include="UnVerfityImage\UnCode.cs" />
     <Compile Include="UnVerfityImage\UnCodebase.cs" />
+    <Compile Include="Web\Cookies.cs" />
     <Compile Include="Web\Utils.cs" />
     <Compile Include="Web\YRequest.cs" />
     <Compile Include="XmlHelper\XmlHelper.cs" />
