@@ -43,9 +43,14 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Common\SerializationHelper.cs" />
+    <Compile Include="Common\Serializer.cs" />
     <Compile Include="Common\TypeParse.cs" />
     <Compile Include="Common\Utils.cs" />
     <Compile Include="Data\DbConfigInfo.cs" />
+    <Compile Include="Events\CommonErrorEventArgs.cs" />
+    <Compile Include="Events\MessageEventArgs.cs" />
+    <Compile Include="Events\ProgressChangedEventArgs.cs" />
+    <Compile Include="Events\ReturnCompletedEventArgs.cs" />
     <Compile Include="Httper\Httper.cs" />
     <Compile Include="Httper\NewHttper.cs">
       <SubType>Component</SubType>
@@ -53,6 +58,9 @@
     <Compile Include="HttpModule\HttpModule.cs" />
     <Compile Include="LoginUtility\LoginDZ.cs" />
     <Compile Include="Logs\TinyLogs.cs" />
+    <Compile Include="Proxy\ProxyInfo.cs" />
+    <Compile Include="Proxy\ProxySourcePageInfo.cs" />
+    <Compile Include="Proxy\ProxySpider.cs" />
     <Compile Include="RegexUtility\RegexUtility.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TinyCache\TinyCache.cs" />
@@ -73,9 +81,6 @@
     <Compile Include="Web\YRequest.cs" />
     <Compile Include="XmlHelper\XmlHelper.cs" />
     <Compile Include="XmlHelper\XmlUtility.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Proxy\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

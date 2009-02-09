@@ -17,9 +17,10 @@ namespace Natsuhime
                 r = new Regex(strRegex, RegexOptions.IgnoreCase);
                 m = r.Matches(strSource);
 
-                if (m.Count <= 0) return null;
-
-                return m[0].Groups[1].Value;
+                if (m.Count <= 0) 
+                    return "";
+                else
+                    return m[0].Groups[1].Value;
             }
             catch
             {
