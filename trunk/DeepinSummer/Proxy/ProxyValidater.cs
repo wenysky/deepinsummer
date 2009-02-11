@@ -9,22 +9,27 @@ namespace Natsuhime.Proxy
     {
         List<ProxyInfo> _ProxyList;
         List<ProxyInfo> _ProxyListOK;
+        ManualResetEvent[] _DoneEvents;
+        Thread[] _Threads;
         public void BeginValidate(List<ProxyInfo> proxyList)
         {
             _ProxyList = proxyList;
             _ProxyListOK = new List<ProxyInfo>();
 
-            const int ThreadNum = 2;
+            const int ThreadNum = 1;
             //每个执行方法线程一个Event,最后数组中所有Event都OK后,表示完成
-            ManualResetEvent[] doneEvents = new ManualResetEvent[ThreadNum];
+            _DoneEvents = new ManualResetEvent[ThreadNum];
+            _Threads = new Thread[ThreadNum];
             //用线程池开始线程
             for (int i = 0; i < ThreadNum; i++)
             {
-                doneEvents[i] = new ManualResetEvent(false);
-                ThreadPool.QueueUserWorkItem(Validate, doneEvents[i]);
+                _DoneEvents[i] = new ManualResetEvent(false);
+                _Threads[i] = new Thread(new ThreadStart(Validate));
+                _Threads[i].Name = i.ToString();
+                _Threads[i].Start();
             }
             //等待直到Event标识全部OK
-            WaitHandle.WaitAll(doneEvents);
+            WaitHandle.WaitAll(_DoneEvents);
 
             if (this.Completed != null)
             {
@@ -32,21 +37,20 @@ namespace Natsuhime.Proxy
             }
         }
 
-        private void Validate(object mrevent)
-        {
-            ManualResetEvent doneEvent = (ManualResetEvent)mrevent;
-            Monitor.Enter(_ProxyList);
-            while (_ProxyList.Count > 0)
+        private void Validate()
+        {            
+            while (true)
             {
-                ProxyInfo info = _ProxyList[0];
-                _ProxyList.Remove(info);
-                Monitor.Exit(_ProxyList);
-
-                NewHttper httper = new NewHttper();
+                ProxyInfo info = GetProxy();
+                if (info == null)
+                {
+                    break;
+                }
+                Httper httper = new Httper();
                 httper.Proxy = new System.Net.WebProxy(info.Address, info.Port);
                 httper.Url = "http://www.ip138.com/ips.asp";
                 httper.Charset = "gb2312";
-                SendStatusChanged(string.Format("{0}：{1}校验中...", info.Address, info.Port), "");
+               // SendStatusChanged(string.Format("[线程{0}]{1}：{2}校验中...", Thread.CurrentThread.Name, info.Address, info.Port), "");
                 string returnData;
                 try
                 {
@@ -61,15 +65,27 @@ namespace Natsuhime.Proxy
                     Monitor.Enter(_ProxyListOK);
                     _ProxyListOK.Add(info);
                     Monitor.Exit(_ProxyListOK);
-                    SendStatusChanged(string.Format("[成功]{0}：{1}", info.Address, info.Port), "");
+                    //SendStatusChanged(string.Format("[成功]{0}：{1}", info.Address, info.Port), "");
                 }
                 else
                 {
-                    SendStatusChanged(string.Format("[失败]{0}：{1}", info.Address, info.Port), "");
+                    //SendStatusChanged(string.Format("[失败]{0}：{1}", info.Address, info.Port), "");
                 }
             }
+            _DoneEvents[Convert.ToInt32(Thread.CurrentThread.Name)].Set();
+        }
+
+        private ProxyInfo GetProxy()
+        {
+            Monitor.Enter(_ProxyList);
+            ProxyInfo info;
+            if (_ProxyList.Count > 0)
+            {
+                info = _ProxyList[0];
+                _ProxyList.Remove(info);
+            }
             Monitor.Exit(_ProxyList);
-            doneEvent.Set();
+            return info;
         }
 
         void SendStatusChanged(string message, string extMessage)
