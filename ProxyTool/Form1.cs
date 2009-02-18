@@ -15,7 +15,7 @@ namespace ProxyTool
     {
         string _ProxyListFilePath;
         ProxySpider ps;
-        ProxyValidater2 pv2;
+        ProxyValidater pv2;
         public Form1()
         {
             InitializeComponent();
@@ -110,7 +110,7 @@ namespace ProxyTool
             if (oldJson.Trim() != string.Empty)
             {
                 List<ProxyInfo> list = (List<ProxyInfo>)JavaScriptConvert.DeserializeObject(oldJson, typeof(List<ProxyInfo>));
-                pv2 = new ProxyValidater2();
+                pv2 = new ProxyValidater();
                 pv2.CalculatePrimeCompleted += new CalculatePrimeCompletedEventHandler(pv2_CalculatePrimeCompleted);
                 pv2.StatusChanged += new StatusChangedEventHandler(pv2_StatusChanged);
                 pv2.ValidateAsync(ref list, 0);
