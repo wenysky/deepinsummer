@@ -62,8 +62,6 @@
     <Compile Include="Proxy\ProxySourcePageInfo.cs" />
     <Compile Include="Proxy\ProxySpider.cs" />
     <Compile Include="Proxy\ProxyValidater.cs">
-    </Compile>
-    <Compile Include="Proxy\ProxyValidater2.cs">
       <SubType>Component</SubType>
     </Compile>
     <Compile Include="RegexUtility\RegexUtility.cs" />
