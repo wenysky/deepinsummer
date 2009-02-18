@@ -47,7 +47,7 @@ namespace Natsuhime.Proxy
             {
                 if (this.Completed != null)
                 {
-                    this.Completed(this, new Natsuhime.Events.ReturnCompletedEventArgs(this._ProxyList));
+                    this.Completed(this, new Natsuhime.Events.ReturnCompletedEventArgs(this._ProxyList, null, false, "77777"));
                 }
             }
         }
@@ -69,7 +69,7 @@ namespace Natsuhime.Proxy
         {
             if (this.StatusChanged != null)
             {
-                this.StatusChanged(this, new Natsuhime.Events.MessageEventArgs("获取列表", message, extMessage));
+                this.StatusChanged(this, new Natsuhime.Events.MessageEventArgs("获取列表", message, extMessage, "7777"));
             }
         }
 
