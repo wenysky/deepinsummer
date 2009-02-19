@@ -25,7 +25,7 @@ namespace Natsuhime.Proxy
             this._CompletedCount++;
             if (e.Error == null)
             {
-                System.Text.RegularExpressions.MatchCollection mc = RegexUtility.GetMatchFull(e.ResponseString, e.UserState.ToString());
+                System.Text.RegularExpressions.MatchCollection mc = RegexUtility.GetMatchFull(e.ResponseString, ((ProxySourcePageInfo)e.UserState).RegexString);
                 if (mc != null)
                 {
                     foreach (System.Text.RegularExpressions.Match m in mc)
@@ -60,7 +60,7 @@ namespace Natsuhime.Proxy
                 this._httper.Timeout = 10000;
                 this._httper.Charset = pspi.PageCharset;
                 this._httper.Url = pspi.PageUrl;
-                this._httper.RequestStringAsync(EnumRequestMethod.GET, pspi.RegexString);
+                this._httper.RequestStringAsync(EnumRequestMethod.GET, pspi);
                 SendStatusChanged("连接" + pspi.PageUrl + "...", "");                
             }
         }
