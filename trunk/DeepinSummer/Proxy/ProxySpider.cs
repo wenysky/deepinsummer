@@ -20,6 +20,19 @@ namespace Natsuhime.Proxy
             this._httper.RequestStringCompleted += new NewHttper.RequestStringCompleteEventHandler(_httper_RequestStringCompleted);
         }
 
+
+        public void BeginFetch()
+        {
+            foreach (ProxySourcePageInfo pspi in this._SourcePageInfo)
+            {
+                SendStatusChanged(string.Format("分析{0}", pspi.PageUrl), "");
+                this._httper.Timeout = 10000;
+                this._httper.Charset = pspi.PageCharset;
+                this._httper.Url = pspi.PageUrl;
+                this._httper.RequestStringAsync(EnumRequestMethod.GET, pspi);
+                SendStatusChanged("连接" + pspi.PageUrl + "...", "");                
+            }
+        }
         void _httper_RequestStringCompleted(object sender, RequestStringCompletedEventArgs e)
         {
             this._CompletedCount++;
@@ -52,18 +65,8 @@ namespace Natsuhime.Proxy
             }
         }
 
-        public void BeginFetch()
-        {
-            foreach (ProxySourcePageInfo pspi in this._SourcePageInfo)
-            {
-                SendStatusChanged(string.Format("分析{0}", pspi.PageUrl), "");
-                this._httper.Timeout = 10000;
-                this._httper.Charset = pspi.PageCharset;
-                this._httper.Url = pspi.PageUrl;
-                this._httper.RequestStringAsync(EnumRequestMethod.GET, pspi);
-                SendStatusChanged("连接" + pspi.PageUrl + "...", "");                
-            }
-        }
+
+
 
         void SendStatusChanged(string message, string extMessage)
         {
@@ -72,7 +75,6 @@ namespace Natsuhime.Proxy
                 this.StatusChanged(this, new Natsuhime.Events.MessageEventArgs("获取列表", message, extMessage, "7777"));
             }
         }
-
         public event EventHandler<Events.MessageEventArgs> StatusChanged;
         public event EventHandler<Events.ProgressChangedEventArgs> ProgressChanged;
         public event EventHandler<Events.ReturnCompletedEventArgs> Completed;

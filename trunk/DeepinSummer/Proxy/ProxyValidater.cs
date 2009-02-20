@@ -20,9 +20,9 @@ namespace Natsuhime.Proxy
     public delegate void StatusChangedEventHandler(
         Natsuhime.Events.MessageEventArgs e);
 
-    public delegate void CalculatePrimeCompletedEventHandler(
+    public delegate void CompletedEventHandler(
         object sender,
-        CalculatePrimeCompletedEventArgs e);
+        CompletedEventArgs e);
 
     // 这个类实现了基于事件的异步模式
     // 异步链接代理验证页面验证代理是否有效
@@ -45,7 +45,7 @@ namespace Natsuhime.Proxy
         #region 公共事件
 
         public event ProgressChangedEventHandler ProgressChanged;
-        public event CalculatePrimeCompletedEventHandler Completed;
+        public event CompletedEventHandler Completed;
         public event StatusChangedEventHandler StatusChanged;
 
         #endregion
@@ -289,8 +289,8 @@ namespace Natsuhime.Proxy
         // This method is invoked via the AsyncOperation object,so it is guaranteed to be executed on the correct thread.
         private void CalculateCompleted(object operationState)
         {
-            CalculatePrimeCompletedEventArgs e =
-                operationState as CalculatePrimeCompletedEventArgs;
+            CompletedEventArgs e =
+                operationState as CompletedEventArgs;
 
             OnCalculatePrimeCompleted(e);
         }
@@ -314,7 +314,7 @@ namespace Natsuhime.Proxy
         }
 
         protected void OnCalculatePrimeCompleted(
-            CalculatePrimeCompletedEventArgs e)
+            CompletedEventArgs e)
         {
             if (Completed != null)
             {
@@ -359,8 +359,8 @@ namespace Natsuhime.Proxy
 
             // Package the results of the operation in a 
             // CalculatePrimeCompletedEventArgs.
-            CalculatePrimeCompletedEventArgs e =
-                new CalculatePrimeCompletedEventArgs(
+            CompletedEventArgs e =
+                new CompletedEventArgs(
                 proxylistOk,
                 exception,
                 canceled,
@@ -414,11 +414,11 @@ namespace Natsuhime.Proxy
         }
     }
 
-    public class CalculatePrimeCompletedEventArgs :
+    public class CompletedEventArgs :
         AsyncCompletedEventArgs
     {
         public List<ProxyInfo> ProxyList { get; set; }
-        public CalculatePrimeCompletedEventArgs(
+        public CompletedEventArgs(
             List<ProxyInfo> proxylistOk,
             Exception e,
             bool canceled,

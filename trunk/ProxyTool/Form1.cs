@@ -115,7 +115,7 @@ namespace ProxyTool
             if (list != null && list.Count > 0)
             {
                 pv2 = new ProxyValidater((ProxyValidateUrlInfo)_Config["validate_pageurl"]);
-                pv2.Completed += new CalculatePrimeCompletedEventHandler(pv2_ValidateCompleted);
+                pv2.Completed += new CompletedEventHandler(pv2_ValidateCompleted);
                 pv2.StatusChanged += new StatusChangedEventHandler(pv2_StatusChanged);
                 pv2.ValidateAsync(ref list, 0);
             }
@@ -128,7 +128,7 @@ namespace ProxyTool
         {
             ShowMessage(e.UserState.ToString(), e.Message, e.ExtMessage);
         }
-        void pv2_ValidateCompleted(object sender, CalculatePrimeCompletedEventArgs e)
+        void pv2_ValidateCompleted(object sender, CompletedEventArgs e)
         {
             if (e.Error == null)
             {
