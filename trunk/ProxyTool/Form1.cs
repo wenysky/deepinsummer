@@ -73,7 +73,7 @@ namespace ProxyTool
         private void btnGetProxyList_Click(object sender, EventArgs e)
         {
             List<ProxySourcePageInfo> pspi = (List<ProxySourcePageInfo>)_Config["source_pageurl"];
-            
+
             ps = new ProxySpider(pspi);
             ps.Completed += new EventHandler<Natsuhime.Events.ReturnCompletedEventArgs>(ps_Completed);
             ps.StatusChanged += new EventHandler<Natsuhime.Events.MessageEventArgs>(ps_StatusChanged);
@@ -90,15 +90,12 @@ namespace ProxyTool
                 ShowMessage("获取列表", "完成.", "");
                 List<ProxyInfo> list = (List<ProxyInfo>)e.ReturnObject;
 
-                string oldJson = File.ReadAllText(_ProxyListFilePath, new UTF8Encoding(true, true));
-                if (oldJson.Trim() != string.Empty)
+                List<ProxyInfo> oldList = ProxyUtility.GetProxyList_FromConfig(_ProxyListFilePath);
+                if (oldList != null && oldList.Count > 0)
                 {
-                    List<ProxyInfo> oldList = (List<ProxyInfo>)JavaScriptConvert.DeserializeObject(oldJson, typeof(List<ProxyInfo>));
                     list.AddRange(oldList);
                 }
-
-                string json = JavaScriptConvert.SerializeObject(RemoveExitsProxy(list));
-                File.WriteAllText(_ProxyListFilePath, json, new UTF8Encoding(true, true));
+                ProxyUtility.SaveProxyList_ToConfig(RemoveExitsProxy(list), _ProxyListFilePath);
                 ShowMessage("获取列表", "保存配置成功.", "");
             }
             else
@@ -133,7 +130,7 @@ namespace ProxyTool
             if (e.Error == null)
             {
                 ShowMessage("验证列表", "完成.", "");
-                SerializationHelper.SaveJson(RemoveExitsProxy(e.ProxyList), _ProxyListFilePath);
+                ProxyUtility.SaveProxyList_ToConfig(RemoveExitsProxy(e.ProxyList), _ProxyListFilePath);
                 ShowMessage("验证列表", "保存到配置成功.", "");
             }
             else
