@@ -9,6 +9,7 @@ using Natsuhime.Proxy;
 using Newtonsoft.Json;
 using System.IO;
 using Natsuhime.Common;
+using System.Threading;
 
 namespace ProxyTool
 {
@@ -106,15 +107,23 @@ namespace ProxyTool
         #endregion
 
         #region 验证
+        List<ProxyInfo> _ProxyListOK;
+        int _ThreadNum;
         private void btnValidate_Click(object sender, EventArgs e)
         {
             List<ProxyInfo> list = (List<ProxyInfo>)SerializationHelper.LoadJson(_ProxyListFilePath, typeof(List<ProxyInfo>));
             if (list != null && list.Count > 0)
             {
+                _ProxyListOK = new List<ProxyInfo>();
+                _ThreadNum = 5;
+
                 pv2 = new ProxyValidater((ProxyValidateUrlInfo)_Config["validate_pageurl"]);
                 pv2.Completed += new CompletedEventHandler(pv2_ValidateCompleted);
                 pv2.StatusChanged += new StatusChangedEventHandler(pv2_StatusChanged);
-                pv2.ValidateAsync(ref list, 0);
+                for (int i = 1; i <= _ThreadNum; i++)
+                {
+                    pv2.ValidateAsync(ref list, i);
+                }
             }
             else
             {
@@ -129,9 +138,18 @@ namespace ProxyTool
         {
             if (e.Error == null)
             {
-                ShowMessage("验证列表", "完成.", "");
-                ProxyUtility.SaveProxyList_ToConfig(RemoveExitsProxy(e.ProxyList), _ProxyListFilePath);
-                ShowMessage("验证列表", "保存到配置成功.", "");
+                _ThreadNum--;
+                ShowMessage("验证列表[" + e.UserState.ToString() + "]", "完成.", "");
+                Monitor.Enter(_ProxyListOK);
+                _ProxyListOK.AddRange(e.ProxyList);
+                Monitor.Exit(_ProxyListOK);
+
+                if (_ThreadNum < 1)
+                {
+                    ShowMessage("验证列表", "全部完成.", "");
+                    ProxyUtility.SaveProxyList_ToConfig(RemoveExitsProxy(_ProxyListOK), _ProxyListFilePath);
+                    ShowMessage("验证列表", "保存到配置成功.", "");
+                }
             }
             else
             {
