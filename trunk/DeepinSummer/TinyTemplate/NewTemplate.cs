@@ -89,14 +89,6 @@ namespace Natsuhime
         string InheritsPrefix_Default;
         string Inherits_Default;
         string Import_Default;
-        /// <summary>
-        /// 读取模板文件的目录
-        /// </summary>
-        string TemplateFilePath;
-        /// <summary>
-        /// ASPX文件生成目录
-        /// </summary>
-        string PageFileFilePath;
 
         #region 属性
         public string Productversion { get; set; }
@@ -111,19 +103,24 @@ namespace Natsuhime
         {
             Create(templatefilefolder, pagefilefolder, 1);
         }
+        public void CreateFromFileList(List<KeyValuePair<string, string>> templateFileList)
+        {
+            Create(templateFileList, 1);
+        }
 
         #region 入口
 
-        //只支持layer层级嵌套为1
+        /// <summary>
+        /// 通过模板的目录生成目标页面(只支持layer层级嵌套为1)
+        /// </summary>
+        /// <param name="templatefilepath"></param>
+        /// <param name="pagefilepath"></param>
+        /// <param name="layer"></param>
         void Create(string templatefilepath, string pagefilepath, int layer)
         {
-            this.TemplateFilePath = templatefilepath;
-            this.PageFileFilePath = pagefilepath;
-
-
             //取得目录下的文件列表
-            string[] templatefilelist = Directory.GetFiles(this.TemplateFilePath, "*.htm");
-            System.Diagnostics.Debug.WriteLine(string.Format("目录:{0}下的文件列表载入完毕.", this.TemplateFilePath));
+            string[] templatefilelist = Directory.GetFiles(templatefilepath, "*.htm");
+            System.Diagnostics.Debug.WriteLine(string.Format("目录:{0}下的文件列表载入完毕.", templatefilepath));
 
             //非引用模板列表
             List<string> maintemplatefilelist = new List<string>();
@@ -135,7 +132,7 @@ namespace Natsuhime
                 string filename = Path.GetFileNameWithoutExtension(file);
                 if (filename.StartsWith("_"))
                 {
-                    LoadRefTemplateCache(filename);
+                    LoadRefTemplateCache(file);
                 }
                 else
                 {
@@ -149,7 +146,7 @@ namespace Natsuhime
             {
                 this.Inherits_Default = this.InheritsPrefix_Default + "." + Path.GetFileNameWithoutExtension(file);
                 string result = CreatMainTemplate(file);
-                string aspxfilepath = Path.Combine(this.PageFileFilePath, Path.GetFileNameWithoutExtension(file) + ".aspx");
+                string aspxfilepath = Path.Combine(pagefilepath, Path.GetFileNameWithoutExtension(file) + ".aspx");
                 //using (StreamWriter sw = new StreamWriter(aspxfilepath, false, Encoding.UTF8))
                 //{
                 //    sw.Write(result);
@@ -162,15 +159,57 @@ namespace Natsuhime
             }
             System.Diagnostics.Debug.WriteLine("生成完毕!");
         }
+
+        /// <summary>
+        /// 通过模板的文件列表生成页面(只支持layer层级嵌套为1)
+        /// </summary>
+        /// <param name="templateFileList"></param>
+        /// <param name="layer"></param>
+        void Create(List<KeyValuePair<string, string>> templateFileList, int layer)
+        {
+            //非引用模板列表
+            List<KeyValuePair<string, string>> maintemplatefilelist = new List<KeyValuePair<string, string>>();
+            //_开头的被引用模板内容缓存.转换后存入缓存._开头的模板是最深模板,里面不能再引用别人.
+            reftemplatecache = new Dictionary<string, string>();
+
+            foreach (KeyValuePair<string, string> file in templateFileList)
+            {
+                string filename = Path.GetFileNameWithoutExtension(file.Key);
+                if (filename.StartsWith("_"))
+                {
+                    LoadRefTemplateCache(file.Key);
+                }
+                else
+                {
+                    maintemplatefilelist.Add(file);
+                    System.Diagnostics.Debug.WriteLine(string.Format("主模板:{0}已载入列表.", file.Key));
+                }
+            }
+
+            //读取主模板,匹配后生成.
+            foreach (KeyValuePair<string, string> file in maintemplatefilelist)
+            {
+                this.Inherits_Default = this.InheritsPrefix_Default + "." + Path.GetFileNameWithoutExtension(file.Key);
+                string result = CreatMainTemplate(file.Key);
+                string aspxfilepath = Path.Combine(file.Value, Path.GetFileNameWithoutExtension(file.Key) + ".aspx");
+
+                File.WriteAllText(
+                    aspxfilepath,
+                    result,
+                    new UTF8Encoding(true, true)
+                    );
+            }
+            System.Diagnostics.Debug.WriteLine("生成完毕!");
+        }
         /// <summary>
         /// 载入子模板进入缓存的方法
         /// </summary>
         /// <param name="filename"></param>
-        void LoadRefTemplateCache(string filename)
+        void LoadRefTemplateCache(string filepath)
         {
+            string filename = Path.GetFileNameWithoutExtension(filepath);
             if (!reftemplatecache.ContainsKey(filename))
             {
-                string filepath = Path.Combine(this.TemplateFilePath, filename + ".htm");
                 if (File.Exists(filepath))
                 {
                     string content = GetRefTemplate(filepath);
@@ -299,7 +338,7 @@ namespace Natsuhime
             //子模板
             foreach (Match m in r[0].Matches(source.ToString()))
             {
-                //TODO 子模板载入问题,现在的子模板无法嵌套,因为有的子模板载入缓存顺序不一致.
+                //TODO 子模板载入问题,现在的子模板无法嵌套,因为有的子模板载入缓存顺序不一致.//暂时失效,因为现在是传入filepath而不是filename了
                 string subtemplatename = m.Groups[1].ToString();
                 if (!reftemplatecache.ContainsKey(subtemplatename))
                 {
