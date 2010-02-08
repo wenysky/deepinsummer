@@ -15,7 +15,7 @@ namespace Natsuhime
     /// 对Http协议的封装（post,get）,提供同步和异步调用的方法
     /// </summary>
     [ToolboxItem(false)]
-    public class Httper:Component
+    public class NewHttper:Component
     {
         #region 属性
         private string m_Url;
@@ -123,12 +123,12 @@ namespace Natsuhime
          /////////////////////////////////////////////////////////////
         #region Construction and destruction
 
-        public Httper(IContainer container):this()
+        public NewHttper(IContainer container):this()
         {   
             container.Add(this);
         }
 
-        public Httper()
+        public NewHttper()
         {   
             InitializeComponent();
             InitializeDelegates();
@@ -713,7 +713,7 @@ namespace Natsuhime
         public string GetPageLanguageCode()
         {
             string pageLanguageCode = HttpGet();
-            return RegexUtilty.GetMatch(pageLanguageCode, "charset=(.*)\"");
+            return RegexUtility.GetMatch(pageLanguageCode, "charset=(.*)\"");
         }
         public string HttpGet()
         {
