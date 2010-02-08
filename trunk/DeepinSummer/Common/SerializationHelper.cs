@@ -4,6 +4,7 @@ using System.Text;
 using Newtonsoft.Json;
 using System.Xml.Serialization;
 using System.Runtime.Serialization.Formatters.Binary;
+using System.Xml;
 
 namespace Natsuhime.Common
 {
@@ -17,12 +18,18 @@ namespace Natsuhime.Common
         /// <param name="fullXmlPath"></param>
         public static void SaveXml(object o, string fullXmlPath)
         {
-            FileStream fs = null;
+            //FileStream fs = null;
+            XmlTextWriter xw = null;
             try
             {
-                fs = new FileStream(fullXmlPath, FileMode.OpenOrCreate);
+                //fs = new FileStream(fullXmlPath, FileMode.OpenOrCreate);
+                xw = new XmlTextWriter(fullXmlPath, Encoding.GetEncoding("gb2312"));
                 XmlSerializer xs = new XmlSerializer(o.GetType());
-                xs.Serialize(fs, o);
+
+
+                XmlSerializerNamespaces ns = new XmlSerializerNamespaces();
+                ns.Add("", "");
+                xs.Serialize(xw, o, ns);
             }
             catch (Exception ex)
             {
@@ -30,8 +37,12 @@ namespace Natsuhime.Common
             }
             finally
             {
-                if (fs != null)
-                    fs.Close();
+                //if (fs != null)
+                //    fs.Close();
+                if (xw != null)
+                {
+                    xw.Close();
+                }
             }
         }
         /// <summary>
