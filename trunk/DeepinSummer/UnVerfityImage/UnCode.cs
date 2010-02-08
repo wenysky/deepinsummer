@@ -31,9 +31,19 @@ namespace Natsuhime
             get { return m_ImgCode; }
             set { m_ImgCode = value; }
         }
+        public UnCodeInfo()
+        {
+        }
+
+        public UnCodeInfo(string code, string imgCode)
+            : this()
+        {
+            this.m_ImgCode = imgCode;
+            this.m_Code = code;
+        }
     }
     public class UnCode : UnCodebase
-    {        
+    {
         public UnCode(Bitmap pic)
             : base(pic)
         {
@@ -70,6 +80,7 @@ namespace Natsuhime
                     if (objUnCode.ImgCode == code)
                     {
                         result += objUnCode.Code;
+                        break;
                     }
                 }
             }
