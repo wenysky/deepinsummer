@@ -145,6 +145,11 @@ namespace Natsuhime.Common
             return defValue;
         }
 
+        /// <summary>
+        /// 时间戳转换成DateTime
+        /// </summary>
+        /// <param name="s"></param>
+        /// <returns></returns>
         public static string Timestamp2Date(string s)
         {
             string timeStamp = s;
@@ -154,7 +159,40 @@ namespace Natsuhime.Common
             DateTime dtResult = dtStart.Add(toNow);
             return dtResult.ToString("yyyy-MM-dd");
         }
+        /// <summary>
+        /// DateTime转换成时间戳
+        /// </summary>
+        /// <param name="s"></param>
+        /// <returns></returns>
+        public static string DateTimeTimestamp(string s)
+        {
+            DateTime dtStart = TimeZone.CurrentTimeZone.ToLocalTime(new DateTime(1970, 1, 1));
+            DateTime dtNow = DateTime.Parse(s);
+            TimeSpan toNow = dtNow.Subtract(dtStart);
+            string timeStamp = toNow.Ticks.ToString();
+            return timeStamp.Substring(0, timeStamp.Length - 7);
+        }
 
+        /// <summary>
+        /// 取得当前的时间戳.
+        /// </summary>
+        /// <returns></returns>
+        public static string GetCurrentUnixTimestamp()
+        {
+            DateTime dtStart = TimeZone.CurrentTimeZone.ToLocalTime(new DateTime(1970, 1, 1));
+            DateTime dtNow = DateTime.Parse(DateTime.Now.ToString());
+            TimeSpan toNow = dtNow.Subtract(dtStart);
+            string timeStamp = toNow.Ticks.ToString();
+            return timeStamp.Substring(0, timeStamp.Length - 7);
+        }
+
+        /// <summary>
+        /// 取得某个时间的时间戳
+        /// </summary>
+        /// <param name="year"></param>
+        /// <param name="month"></param>
+        /// <param name="day"></param>
+        /// <returns></returns>
         public static string GetTimestamp(int year, int month, int day)
         {
             DateTime timeStamp0 = new DateTime(1970, 1, 1);

@@ -49,18 +49,6 @@ namespace Natsuhime.Common
             }
         }
         /// <summary>
-        /// 取得当前的时间戳.
-        /// </summary>
-        /// <returns></returns>
-        public static string UnixTimestamp()
-        {
-            DateTime dtStart = TimeZone.CurrentTimeZone.ToLocalTime(new DateTime(1970, 1, 1));
-            DateTime dtNow = DateTime.Parse(DateTime.Now.ToString());
-            TimeSpan toNow = dtNow.Subtract(dtStart);
-            string timeStamp = toNow.Ticks.ToString();
-            return timeStamp.Substring(0, timeStamp.Length - 7);
-        }
-        /// <summary>
         /// MD5加密(32位)
         /// </summary>
         /// <param name="str">原字符串</param>
