@@ -251,5 +251,28 @@ namespace Natsuhime.Web
         {
             return HttpUtility.UrlDecode(str);
         }
+
+        /// <summary>
+        /// 取得HTML中所有图片的 URL。
+        /// </summary>
+        /// <param name="sHtmlText">HTML代码</param>
+        /// <returns>图片的URL列表</returns>
+        public static string[] GetImageUrls(string sourcehtml)
+        {
+            //匹配img标签
+            Regex regImg = new Regex(@"<img\b[^<>]*?\bsrc[\s\t\r\n]*=[\s\t\r\n]*[""']?[\s\t\r\n]*(?<imgUrl>[^\s\t\r\n""'<>]*)[^<>]*?/?[\s\t\r\n]*>", RegexOptions.IgnoreCase);
+
+            //搜索匹配字符串
+            MatchCollection mc = regImg.Matches(sourcehtml);
+
+            int i = 0;
+            string[] urls = new string[mc.Count];
+
+            // 取得匹配项列表
+            foreach (Match match in mc)
+                urls[i++] = match.Groups["imgUrl"].Value;
+
+            return urls;
+        }
     }
 }
