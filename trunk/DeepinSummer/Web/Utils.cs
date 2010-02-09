@@ -274,5 +274,32 @@ namespace Natsuhime.Web
 
             return urls;
         }
+
+
+        public static string CompleteRelativeUrl(string baseUrl, string RelativeUrl)
+        {
+            ////短路径处理
+            //if (RelativeUrl.IndexOf("http://") == -1 && RelativeUrl.IndexOf("https://") == -1)
+            //    RelativeUrl = (RelativeUrl[0] == '/' ? domainName : dnDir) + RelativeUrl;
+
+            if (RelativeUrl.IndexOf("http://") == -1 && RelativeUrl.IndexOf("https://") == -1)
+            {
+                if (RelativeUrl[0] == '.')
+                {
+                    RelativeUrl = baseUrl + RelativeUrl.TrimStart('.').TrimStart('/');
+                }
+                if (RelativeUrl[0] == '/')
+                {
+                    RelativeUrl = baseUrl + RelativeUrl.TrimStart('/');
+                }
+
+                //www.abc.com/1.jpg可以跳过,images/1.jpg需要添加
+                if (RelativeUrl.Split('.').Length < 3)
+                {
+                    RelativeUrl = baseUrl + RelativeUrl;
+                }
+            }
+            return RelativeUrl;
+        }
     }
 }

@@ -79,6 +79,8 @@
     <Compile Include="Proxy\ProxyValidateUrlInfo.cs" />
     <Compile Include="RegexUtility\RegexUtility.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Text\RegexStringLib.cs" />
+    <Compile Include="Text\TextAnalyze.cs" />
     <Compile Include="TinyCache\TinyCache.cs" />
     <Compile Include="Data\DbConfigs.cs" />
     <Compile Include="Data\DbHelper.cs" />
@@ -93,6 +95,8 @@
     <Compile Include="UnVerfityImage\UnCode.cs" />
     <Compile Include="UnVerfityImage\UnCodebase.cs" />
     <Compile Include="Web\Cookies.cs" />
+    <Compile Include="Web\Plugin\Discuz\RegexStringLib.cs" />
+    <Compile Include="Web\Plugin\Discuz\TextAnalyze.cs" />
     <Compile Include="Web\Utils.cs" />
     <Compile Include="Web\YRequest.cs" />
     <Compile Include="Win32\WinHotKey.cs" />
