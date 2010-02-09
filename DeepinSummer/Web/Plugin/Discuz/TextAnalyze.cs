@@ -18,11 +18,29 @@ namespace Natsuhime.Web.Plugin.Discuz
             {
                 foreach (Match m in mc)
                 {
-                    threads.Add(m.Groups[2].Value, m.Groups[1].Value);
+                    if (!threads.ContainsKey(m.Groups[1].Value))
+                    {
+                        threads.Add(m.Groups[1].Value, m.Groups[2].Value);
+                    }
                 }
             }
-
             return threads;
+        }
+
+        public static int GetBoardPageCount(string sourceHtml)
+        {
+            string regexstring = RegexStringLib.GetBoardPageCount();
+            string result = RegexUtility.GetMatch(sourceHtml, regexstring);
+
+            int pageCount;
+            if (int.TryParse(result, out pageCount))
+            {
+                return pageCount;
+            }
+            else
+            {
+                return -1;
+            }
         }
     }
 }
