@@ -11,20 +11,17 @@ namespace Natsuhime
         {
             try
             {
+                Regex r = new Regex(strRegex, RegexOptions.IgnoreCase);
+                MatchCollection m = r.Matches(strSource);
 
-                Regex r;
-                MatchCollection m;
-                r = new Regex(strRegex, RegexOptions.IgnoreCase);
-                m = r.Matches(strSource);
-
-                if (m.Count <= 0) 
-                    return "";
+                if (m.Count <= 0)
+                    return string.Empty;
                 else
                     return m[0].Groups[1].Value;
             }
             catch
             {
-                return "";
+                return string.Empty;
             }
         }
 
@@ -32,15 +29,13 @@ namespace Natsuhime
         {
             try
             {
+                Regex r = new Regex(strRegex, RegexOptions.IgnoreCase);
+                MatchCollection m = r.Matches(strSource);
 
-                Regex r;
-                MatchCollection m;
-                r = new Regex(strRegex, RegexOptions.IgnoreCase);
-                m = r.Matches(strSource);
-
-                if (m.Count <= 0) return null;
-
-                return m;
+                if (m.Count <= 0)
+                    return null;
+                else
+                    return m;
             }
             catch
             {
@@ -61,6 +56,6 @@ namespace Natsuhime
             RegexOptions options = RegexOptions.IgnoreCase;
             Regex regex = new Regex(pattern, options);
             return regex.Replace(input, replacement);
-        }    
+        }
     }
 }
