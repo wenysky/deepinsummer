@@ -30,6 +30,26 @@
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\x86\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
+    <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <OutputPath>bin\x86\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <Optimize>true</Optimize>
+    <DebugType>pdbonly</DebugType>
+    <PlatformTarget>x86</PlatformTarget>
+    <CodeAnalysisUseTypeNameInSuppression>true</CodeAnalysisUseTypeNameInSuppression>
+    <CodeAnalysisModuleSuppressionsFile>GlobalSuppressions.cs</CodeAnalysisModuleSuppressionsFile>
+    <ErrorReport>prompt</ErrorReport>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="MySql.Data, Version=5.0.7.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
@@ -41,7 +61,7 @@
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
-    <Reference Include="System.Data.SQLite, Version=1.0.60.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=x86">
+    <Reference Include="System.Data.SQLite, Version=1.0.65.0, Culture=neutral, PublicKeyToken=db937bc2d44ff139, processorArchitecture=x86">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>RefApp\System.Data.SQLite.dll</HintPath>
     </Reference>
@@ -62,6 +82,36 @@
     <Compile Include="Events\MessageEventArgs.cs" />
     <Compile Include="Events\ProgressChangedEventArgs.cs" />
     <Compile Include="Events\ReturnCompletedEventArgs.cs" />
+    <Compile Include="Form\Controls\Button.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Form\Controls\ButtonColorTable.cs" />
+    <Compile Include="Form\Controls\GraphicsTools.cs" />
+    <Compile Include="Form\Controls\ImageButton.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Form\Controls\MDIPanel.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Form\Controls\ProgressBar.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Form\Controls\TabToolStripColor.cs" />
+    <Compile Include="Form\Controls\TabToolStripRender.cs" />
+    <Compile Include="Form\Controls\TitlePanel.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Form\Controls\ToolStripColorTable.cs" />
+    <Compile Include="Form\Controls\ToolStripPanel.cs">
+      <SubType>Component</SubType>
+    </Compile>
+    <Compile Include="Form\Controls\ToolStripPanel.designer.cs">
+      <DependentUpon>ToolStripPanel.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Form\Controls\ToolStripRender.cs" />
+    <Compile Include="Form\Controls\WizardBottomPanel.cs">
+      <SubType>Component</SubType>
+    </Compile>
     <Compile Include="Httper\Httper.cs" />
     <Compile Include="Httper\NewHttper.cs">
       <SubType>Component</SubType>
