@@ -27,9 +27,13 @@ namespace Natsuhime
 
         public static MatchCollection GetMatchFull(string strSource, string strRegex)
         {
+            return GetMatchFull(strSource, strRegex, RegexOptions.IgnoreCase);
+        }
+        public static MatchCollection GetMatchFull(string strSource, string strRegex, RegexOptions options)
+        {
             try
             {
-                Regex r = new Regex(strRegex, RegexOptions.IgnoreCase);
+                Regex r = new Regex(strRegex, options);
                 MatchCollection m = r.Matches(strSource);
 
                 if (m.Count <= 0)
@@ -52,8 +56,12 @@ namespace Natsuhime
         /// <returns>替换后的字符串</returns>
         public static string ReplaceRegex(string pattern, string input, string replacement)
         {
+            return ReplaceRegex(pattern, input, replacement, RegexOptions.IgnoreCase);
+        }
+
+        public static string ReplaceRegex(string pattern, string input, string replacement, RegexOptions options)
+        {
             // Regex search and replace
-            RegexOptions options = RegexOptions.IgnoreCase;
             Regex regex = new Regex(pattern, options);
             return regex.Replace(input, replacement);
         }
