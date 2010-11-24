@@ -49,6 +49,62 @@ namespace Natsuhime.Common
             }
         }
         /// <summary>
+        /// 时间戳转换为DateTime
+        /// </summary>
+        /// <param name="timestamp"></param>
+        /// <returns></returns>
+        public static DateTime UnixTimestampToDateTime(long timestamp)
+        {
+            //1 将系统时间转换成UNIX时间戳
+            //DateTime dtStart = TimeZone.CurrentTimeZone.ToLocalTime(new DateTime(1970,1,1));
+            //DateTime dtNow = DateTime.Parse(DateTime.Now.ToString());
+            //TimeSpan toNow = dtNow.Subtract(dtStart);
+            //string timeStamp = toNow.Ticks.ToString();
+            //timeStamp = timeStamp.Substring(0,timeStamp.Length - 7);
+            //2将UNIX时间戳转换成系统时间
+            DateTime dtStart = TimeZone.CurrentTimeZone.ToLocalTime(new DateTime(1970, 1, 1));
+            TimeSpan toNow = new TimeSpan(timestamp * 10000000);
+            DateTime dtResult = dtStart.Add(toNow);
+            return dtResult;
+        }
+
+        public static string UnicodeCharToChineseChar(string str)
+        {
+            ////中文转为UNICODE字符
+            //string str = "中文";
+            //string outStr = "";
+            //if (!string.IsNullOrEmpty(str))
+            //{
+            //    for (int i = 0; i < str.Length; i++)
+            //    {
+            //        //将中文字符转为10进制整数，然后转为16进制unicode字符
+            //        outStr += "\\u" + ((int)str[i]).ToString("x");
+            //    }
+            //}
+
+            //UNICODE字符转为中文
+            //string str = "\\u4e2d\\u6587";
+            string outStr = "";
+            if (!string.IsNullOrEmpty(str))
+            {
+                string[] strlist = str.Replace("\\", "").Split('u');
+                try
+                {
+                    for (int i = 1; i < strlist.Length; i++)
+                    {
+                        //将unicode字符转为10进制整数，然后转为char中文字符
+                        outStr += (char)int.Parse(strlist[i], System.Globalization.NumberStyles.HexNumber);
+                    }
+                }
+                catch (FormatException ex)
+                {
+                    outStr = ex.Message;
+                }
+            }
+            return outStr;
+        }
+
+        /// <summary>
         /// MD5加密(32位)
         /// </summary>
         /// <param name="str">原字符串</param>
