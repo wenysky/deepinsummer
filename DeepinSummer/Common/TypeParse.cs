@@ -166,8 +166,13 @@ namespace Natsuhime.Common
         /// <returns></returns>
         public static string DateTimeTimestamp(string s)
         {
-            DateTime dtStart = TimeZone.CurrentTimeZone.ToLocalTime(new DateTime(1970, 1, 1));
             DateTime dtNow = DateTime.Parse(s);
+            return DateTime2TimeStamp(dtNow);
+        }
+
+        private static string DateTime2TimeStamp(DateTime dtNow)
+        {
+            DateTime dtStart = TimeZone.CurrentTimeZone.ToLocalTime(new DateTime(1970, 1, 1));
             TimeSpan toNow = dtNow.Subtract(dtStart);
             string timeStamp = toNow.Ticks.ToString();
             return timeStamp.Substring(0, timeStamp.Length - 7);
