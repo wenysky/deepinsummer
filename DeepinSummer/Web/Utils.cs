@@ -7,7 +7,7 @@ using System.Web;
 namespace Natsuhime.Web
 {
     public class Utils
-    {        
+    {
         /// <summary>
         /// 获得伪静态页码显示链接
         /// </summary>
@@ -239,7 +239,15 @@ namespace Natsuhime.Web
         /// <returns>编码结果</returns>
         public static string UrlEncode(string str)
         {
-            return HttpUtility.UrlEncode(str);
+            return HttpUtility.UrlEncode(str, Encoding.Default);
+        }
+        public static string UrlEncode(string str, string encodingName)
+        {
+            return HttpUtility.UrlEncode(str, Encoding.GetEncoding(encodingName));
+        }
+        public static string UrlEncode(string str, Encoding e)
+        {
+            return HttpUtility.UrlEncode(str, e);
         }
 
         /// <summary>
@@ -249,7 +257,15 @@ namespace Natsuhime.Web
         /// <returns>解码结果</returns>
         public static string UrlDecode(string str)
         {
-            return HttpUtility.UrlDecode(str);
+            return HttpUtility.UrlDecode(str, Encoding.Default);
+        }
+        public static string UrlDecode(string str, string encodingName)
+        {
+            return HttpUtility.UrlDecode(str, Encoding.GetEncoding(encodingName));
+        }
+        public static string UrlDecode(string str, Encoding e)
+        {
+            return HttpUtility.UrlDecode(str, e);
         }
 
         /// <summary>
