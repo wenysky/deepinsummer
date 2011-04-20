@@ -7,6 +7,7 @@ using System.ComponentModel;
 using System.Threading;
 using System;
 using System.Collections;
+using System.Collections.Generic;
 
 
 namespace Natsuhime
@@ -15,7 +16,7 @@ namespace Natsuhime
     /// 对Http协议的封装（post,get）,提供同步和异步调用的方法
     /// </summary>
     [ToolboxItem(false)]
-    public class NewHttper:Component
+    public class NewHttper : Component
     {
         #region 属性
         private string m_Url;
@@ -35,7 +36,7 @@ namespace Natsuhime
             get;
             set;
         }
-       // private HttpWebRequest objHWR;
+        // private HttpWebRequest objHWR;
 
         public string Url
         {
@@ -92,9 +93,9 @@ namespace Natsuhime
             get { return m_Cookie; }
             set { m_Cookie = value; }
         }
-        #endregion 
+        #endregion
 
-       
+
         public delegate void RequestDataCompletedEventHandler(
             object sender,
             RequestDataCompletedEventArgs e);
@@ -103,12 +104,12 @@ namespace Natsuhime
             RequestStringCompletedEventArgs e
             );
 
-       
+
         public event RequestDataCompletedEventHandler RequestDataCompleted;
         public event RequestStringCompleteEventHandler RequestStringCompleted;
-        
 
-     
+
+
         private SendOrPostCallback onRequestDataCompletedDelegate;
         private SendOrPostCallback onRequestStringCompletedDelegate;
 
@@ -120,25 +121,26 @@ namespace Natsuhime
 
         private System.ComponentModel.Container components = null;
 
-         /////////////////////////////////////////////////////////////
+        /////////////////////////////////////////////////////////////
         #region Construction and destruction
 
-        public NewHttper(IContainer container):this()
-        {   
+        public NewHttper(IContainer container)
+            : this()
+        {
             container.Add(this);
         }
 
         public NewHttper()
-        {   
+        {
             InitializeComponent();
             InitializeDelegates();
-           //objHWR = new HttpWebRequest();
+            //objHWR = new HttpWebRequest();
 
         }
 
         protected virtual void InitializeDelegates()
         {
-            
+
             onRequestDataCompletedDelegate =
                 new SendOrPostCallback(ReportRequestDataCompleted);
             onRequestStringCompletedDelegate =
@@ -168,7 +170,7 @@ namespace Natsuhime
         /// <returns>任务Id,唯一标识一次任务</returns>
         public virtual Guid RequestDataAsync(EnumRequestMethod requestMethod)
         {
-            Guid taskId=Guid.NewGuid();
+            Guid taskId = Guid.NewGuid();
             RequestDataAsync(requestMethod, taskId);
             return taskId;
 
@@ -221,7 +223,7 @@ namespace Natsuhime
                 asyncOp,
                 null,
                 null);
-           
+
         }
 
         public virtual Guid RequestStringAsync(EnumRequestMethod requestMethod)
@@ -285,7 +287,7 @@ namespace Natsuhime
             objHWR.Accept = "*/*";// Accept;
             objHWR.Referer = Referer;
             objHWR.KeepAlive = true;
-            
+
             if (X_FORWARDED_FOR != string.Empty)
             {
                 objHWR.Headers.Set("X_FORWARDED_FOR", X_FORWARDED_FOR);
@@ -307,7 +309,7 @@ namespace Natsuhime
             {
                 objHWR.Method = "POST";
                 objHWR.ContentType = this.ContentType;
-                
+
                 //Stream newStream = null;
                 //try
                 //{
@@ -396,8 +398,8 @@ namespace Natsuhime
             AsyncOperation asyncOp)
         {
 
-            byte[] responseData=null;
-            HttpWebResponse response=null;
+            byte[] responseData = null;
+            HttpWebResponse response = null;
             Exception e = null;
             if (!TaskCanceled(asyncOp.UserSuppliedState))
             {
@@ -440,7 +442,7 @@ namespace Natsuhime
             //completionMethodDelegate(calcState);
         }
 
-        
+
 
         // This is the method that the underlying, free-threaded 
         // asynchronous behavior will invoke.  This will happen on
@@ -451,7 +453,7 @@ namespace Natsuhime
             bool canceled,
             AsyncOperation asyncOp)
         {
-            
+
             // If the task was not previously canceled,
             // remove the task from the lifetime collection.
             if (!canceled)
@@ -461,7 +463,7 @@ namespace Natsuhime
                     userStateToLifetime.Remove(asyncOp.UserSuppliedState);
                 }
             }
-            
+
             RequestStringCompletedEventArgs e =
                 new RequestStringCompletedEventArgs(
                 responseString,
@@ -472,7 +474,7 @@ namespace Natsuhime
             // End the task. The asyncOp object is responsible 
             // for marshaling the call.
             asyncOp.PostOperationCompleted(onRequestStringCompletedDelegate, e);
-            
+
             // Note that after the call to OperationCompleted, 
             // asyncOp is no longer usable, and any attempt to use it
             // will cause an exception to be thrown.
@@ -538,7 +540,7 @@ namespace Natsuhime
             }
         }
 
-       
+
 
         protected void OnRequestDataCompleted(
             RequestDataCompletedEventArgs e)
@@ -549,7 +551,7 @@ namespace Natsuhime
             }
         }
 
-       
+
 
         /// <summary>
         /// 判断一次请求任务是否被取消
@@ -589,11 +591,11 @@ namespace Natsuhime
             }
             finally
             {
-                if(null!=sr)
+                if (null != sr)
                 {
                     sr.Close();
                 }
-                if(null!=responseStream)
+                if (null != responseStream)
                 {
                     responseStream.Close();
                 }
@@ -605,19 +607,19 @@ namespace Natsuhime
         private byte[] GetResponseData(HttpWebResponse response)
         {
 
-          
+
             long contentLength = response.ContentLength;
             Stream readStream = response.GetResponseStream();
-            byte[] resultBytes=null;
+            byte[] resultBytes = null;
             try
-            {  
-  
-                if(null!=readStream)
+            {
+
+                if (null != readStream)
                 {
                     resultBytes = ReadFully(readStream, (int)contentLength);
-                    
+
                 }
-                    
+
 
             }
             finally
@@ -626,12 +628,12 @@ namespace Natsuhime
                 {
                     readStream.Close();
                 }
-                
+
             }
             return resultBytes;
         }
 
-     
+
 
 
         /// <summary>
@@ -641,7 +643,7 @@ namespace Natsuhime
         /// </summary>
         /// <param name="stream">The stream to read data from</param>
         /// <param name="initialLength">The initial buffer length</param>
-        private static byte[]   ReadFully(Stream stream, int initialLength)
+        private static byte[] ReadFully(Stream stream, int initialLength)
         {
             // If we've been passed an unhelpful initial length, just
             // use 32K.
@@ -696,6 +698,20 @@ namespace Natsuhime
             return ret;
         }
 
+        public void SetPostParam(Dictionary<string, string> postParams)
+        {
+            StringBuilder sb = new StringBuilder();
+            foreach (KeyValuePair<string, string> param in postParams)
+            {
+                sb.Append(
+                    string.Format("&{0}={1}",
+                        param.Key,
+                        UrlEncode(param.Value)
+                        )
+                );
+            }
+            PostData = sb.ToString().Trim('&');
+        }
 
         /// <summary>
         /// 暂时不要用这个方法.
@@ -735,7 +751,7 @@ namespace Natsuhime
             objHWR.Accept = Accept;
             objHWR.Referer = Referer;
             objHWR.Method = "GET";
-           
+
             if (X_FORWARDED_FOR != string.Empty)
             {
                 objHWR.Headers.Set("X_FORWARDED_FOR", X_FORWARDED_FOR);
@@ -749,7 +765,7 @@ namespace Natsuhime
             {
                 objHWR.CookieContainer = Cookie;
             }
-           
+
             HttpWebResponse objResponse = null;
             try
             {
@@ -770,8 +786,8 @@ namespace Natsuhime
         public Stream HttpGetStream()
         {
             HttpWebResponse response = HttpGetMethod();
-            Stream s=null;
-            if(null!=response)
+            Stream s = null;
+            if (null != response)
             {
                 s = response.GetResponseStream();
             }
@@ -779,7 +795,7 @@ namespace Natsuhime
         }
         public string HttpPost()
         {
-            
+
             Stream s = HttpPostStream();
             StreamReader sr = new StreamReader(s, Encoding.GetEncoding(Charset));
             string Content = sr.ReadToEnd();
@@ -793,7 +809,7 @@ namespace Natsuhime
         /// <returns>Response对象</returns>
         private HttpWebResponse HttpPostMethod()
         {
-           
+
             HttpWebRequest objHWR = (HttpWebRequest)HttpWebRequest.Create(Url);
             objHWR.Timeout = Timeout;
             objHWR.ContentType = ContentType;
@@ -801,7 +817,7 @@ namespace Natsuhime
             objHWR.Accept = Accept;
             objHWR.Referer = Referer;
             objHWR.Method = "POST";
-          
+
             if (X_FORWARDED_FOR != string.Empty)
             {
                 objHWR.Headers.Set("X_FORWARDED_FOR", X_FORWARDED_FOR);
@@ -863,13 +879,13 @@ namespace Natsuhime
         string UrlEncode(string value)
         {
             return System.Web.HttpUtility.UrlEncode(value, Encoding.GetEncoding(this.m_Charset));
-        } 
+        }
         /////////////////////////////////////////////////////////////////////////
 
         private void BeginHttpReqeust(object requestState)
         {
             RequestState myRequestState = requestState as RequestState;
-            HttpWebRequest  myHttpWebRequest = myRequestState.request;
+            HttpWebRequest myHttpWebRequest = myRequestState.request;
 
             if (myRequestState.RequestMethod == EnumRequestMethod.POST)
             {
@@ -889,7 +905,7 @@ namespace Natsuhime
                     new WaitOrTimerCallback(TimeoutCallback), myRequestState, m_Timeout, true);
             }
 
-           
+
         }
 
         private void ReadCallback(IAsyncResult asynchronousResult)
@@ -903,8 +919,8 @@ namespace Natsuhime
              (IAsyncResult)myHttpWebRequest.BeginGetResponse(new AsyncCallback(RespCallback), myRequestState);
             ThreadPool.RegisterWaitForSingleObject(result.AsyncWaitHandle,
                 new WaitOrTimerCallback(TimeoutCallback), myRequestState, m_Timeout, true);
-            
-            
+
+
         }
 
 
@@ -916,7 +932,7 @@ namespace Natsuhime
             {
                 myRequestState = (RequestState)asynchronousResult.AsyncState;
                 HttpWebRequest myHttpWebRequest = myRequestState.request;
-                
+
                 myRequestState.response = (HttpWebResponse)myHttpWebRequest.EndGetResponse(asynchronousResult);
                 Stream responseStream = myRequestState.response.GetResponseStream();
                 myRequestState.streamResponse = responseStream;
@@ -930,7 +946,7 @@ namespace Natsuhime
             //触发请求出错事件
             if (myRequestState.IsRequestString)
             {
-                myRequestState.Context.Post(onRequestStringCompletedDelegate, 
+                myRequestState.Context.Post(onRequestStringCompletedDelegate,
                   new RequestStringCompletedEventArgs(string.Empty, ex, false, myRequestState.RequestId));
             }
             else
@@ -954,12 +970,12 @@ namespace Natsuhime
                 //触发超时事件
                 if (requestState.IsRequestString)
                 {
-                    requestState.Context.Post(onRequestStringCompletedDelegate, 
+                    requestState.Context.Post(onRequestStringCompletedDelegate,
                        new RequestStringCompletedEventArgs(string.Empty, ex, false, requestState.RequestId));
                 }
                 else
                 {
-                    requestState.Context.Post(onRequestDataCompletedDelegate, 
+                    requestState.Context.Post(onRequestDataCompletedDelegate,
                       new RequestDataCompletedEventArgs(null, ex, false, requestState.RequestId));
                 }
             }
@@ -977,7 +993,7 @@ namespace Natsuhime
                 int read = responseStream.EndRead(asyncResult);
                 if (read > 0)
                 {
-                    
+
                     byte[] tempBuffer = new byte[read];
                     Array.Copy(myRequestState.BufferRead, tempBuffer, read);
                     myRequestState.ResponseData.AddRange(tempBuffer);
@@ -1007,9 +1023,9 @@ namespace Natsuhime
             //触发完成请求
             if (myRequestState.IsRequestString)
             {
-                myRequestState.Context.Post(onRequestStringCompletedDelegate, 
+                myRequestState.Context.Post(onRequestStringCompletedDelegate,
                     new RequestStringCompletedEventArgs(myRequestState.ResponseString.ToString(), ex, false, myRequestState.RequestId));
-              
+
             }
             else
             {
@@ -1017,7 +1033,7 @@ namespace Natsuhime
                 myRequestState.ResponseData.CopyTo(requestData);
                 myRequestState.Context.Post(onRequestDataCompletedDelegate,
                     new RequestDataCompletedEventArgs(requestData, ex, false, myRequestState.RequestId));
-              
+
             }
         }
 
@@ -1033,7 +1049,7 @@ namespace Natsuhime
         #endregion
     }
 
-    
+
 
     #region RequestCompletedEventArgs 参数类
 
@@ -1041,7 +1057,7 @@ namespace Natsuhime
         AsyncCompletedEventArgs
     {
 
-      
+
         private string responseStringValue = string.Empty;
 
         public RequestStringCompletedEventArgs(
@@ -1056,7 +1072,7 @@ namespace Natsuhime
 
         }
 
-       
+
 
         public string ResponseString
         {
@@ -1095,7 +1111,7 @@ namespace Natsuhime
         {
             get
             {
-                
+
                 RaiseExceptionIfNecessary();
                 return responseDataValue;
             }
@@ -1107,8 +1123,8 @@ namespace Natsuhime
 
     public enum EnumRequestMethod
     {
-        GET=0,
-        POST=1
+        GET = 0,
+        POST = 1
     }
 
 
