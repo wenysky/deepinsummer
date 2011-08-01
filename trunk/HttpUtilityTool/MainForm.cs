@@ -7,6 +7,8 @@ using System.ComponentModel;
 using Natsuhime;
 using System.Web;
 using mshtml;
+using System.Collections.Generic;
+using Natsuhime.Common;
 
 namespace HttpUtilityTool
 {
@@ -14,9 +16,32 @@ namespace HttpUtilityTool
     {
         NewHttper httper;
         CookieContainer cookie;
+        List<string> usedUrl;
+        string configPath = System.IO.Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "urls.config");
         public MainForm()
         {
             InitializeComponent();
+            try
+            {
+                LoadFavUrl();
+                if (usedUrl != null)
+                {
+                    BindData();
+                }
+            }
+            catch(Exception ex)
+            {
+                usedUrl = new List<string>();
+            }
+        }
+
+        void LoadFavUrl()
+        {
+            usedUrl = SerializationHelper.LoadJson(configPath, typeof(List<string>)) as List<string>;
+        }
+        void SaveFavUrl()
+        {
+            SerializationHelper.SaveJson(usedUrl, configPath);
         }
         private void Form1_Load(object sender, EventArgs e)
         {
@@ -25,7 +50,6 @@ namespace HttpUtilityTool
             this.cookie = new CookieContainer();
             this.httper = new NewHttper();
             this.httper.Referer = cbxUrl.Text.Trim();
-            //this.httper.UserAgent = "User-Agent: Mozilla/4.0 (compatible; MSIE 7.0; Windows NT 6.0; WOW64; SLCC1; .NET CLR 2.0.50727; .NET CLR 1.1.4322; .NET CLR 3.5.30729; .NET CLR 3.0.30618)";
             this.httper.RequestStringCompleted += new NewHttper.RequestStringCompleteEventHandler(httper_RequestStringCompleted);
             this.wbMain.Navigate("about:blank");
             this.wbMain.DocumentCompleted += new WebBrowserDocumentCompletedEventHandler(wbMain_DocumentCompleted);
@@ -35,9 +59,6 @@ namespace HttpUtilityTool
 
         private void btnSend_Click(object sender, EventArgs e)
         {
-            //ShowMessage("DEBUG COOKIES");
-            //ShowCookie();
-            //ShowMessage("");
             if (ckbxKeepCookie.Checked)
             {
                 httper.Cookie = this.cookie;
@@ -184,6 +205,42 @@ namespace HttpUtilityTool
         private void GetException(Exception ex)
         {
             tbxMain.Text += ex.Message;
+        }
+
+        private void btnClearPostData_Click(object sender, EventArgs e)
+        {
+            tbxPostData.Text = string.Empty;
+        }
+
+        private void btnClearResult_Click(object sender, EventArgs e)
+        {
+            tbxMain.Text = string.Empty;
+        }
+
+        private void btnFavUrl_Click(object sender, EventArgs e)
+        {
+            if (!usedUrl.Contains(cbxUrl.Text.Trim()))
+            {
+                usedUrl.Add(cbxUrl.Text.Trim());
+                BindData();
+                SerializationHelper.SaveJson(usedUrl, configPath);
+            }
+        }
+
+        private void BindData()
+        {
+            cbxUrl.DataSource = usedUrl;
+        }
+
+        private void btnDelFavUrl_Click(object sender, EventArgs e)
+        {
+            if (usedUrl.Contains(cbxUrl.Text.Trim()))
+            {
+                usedUrl.Remove(cbxUrl.Text.Trim());
+                SaveFavUrl();
+                cbxUrl.Items.Clear();
+                LoadFavUrl();
+            }
         }
     }
 }
