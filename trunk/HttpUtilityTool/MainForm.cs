@@ -175,6 +175,7 @@ namespace HttpUtilityTool
                 }
                 ShowMessage(e.ResponseString);
                 ShowCookie();
+                ShowMessage("END REQUEST:");
             }
             else
             {
